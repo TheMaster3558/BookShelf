@@ -1,0 +1,15 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+.idea
+venv/
+.mypy_cache
+*.log
+
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
