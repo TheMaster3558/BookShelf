@@ -11,6 +11,7 @@ from utils import AuthoredView, InteractionCreator
 
 from .views import AuthorSelect, WritingModal, WriteSelect
 from .database import ShareDatabase
+from .speed import get_max
 
 if TYPE_CHECKING:
     from bot import BookShelf
@@ -110,7 +111,7 @@ class Share(ShareDatabase, commands.Cog):
 
         for _ in range(5):
             try:
-                author = max(popular, key=popular.get)  # type: ignore
+                author = get_max(popular)
                 popular_authors.append(
                     author
                 )
