@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from typing import TYPE_CHECKING
 
 import aiosqlite
@@ -112,6 +113,10 @@ class Share(ShareDatabase, commands.Cog):
         for _ in range(5):
             try:
                 author = get_max(popular)
+
+                if not author:
+                    continue
+
                 popular_authors.append(
                     author
                 )
@@ -121,6 +126,7 @@ class Share(ShareDatabase, commands.Cog):
 
         if len(popular_authors) < 1:
             await ctx.send('There are no popular authors in this server.', ephemeral=True)
+            return
 
         select = AuthorSelect(popular_authors)
         view = AuthoredView(ctx.author)

@@ -6,6 +6,8 @@ def get_max(dict population):
     cdef int v
 
     for k, v in population.items():
+        print(k)
+        print(v)
         if v > greatest_value:
             greatest_key, greatest_value = k, v
 
