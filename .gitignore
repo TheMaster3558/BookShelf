@@ -21,3 +21,6 @@ main.py
 
 # databases
 *.db
+
+# secrets
+*.env
