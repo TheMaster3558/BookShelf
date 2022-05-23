@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from typing import TYPE_CHECKING, TypeVar
 
 import aiosqlite
@@ -10,8 +9,8 @@ from discord.ext import commands
 
 from utils import AuthoredView, InteractionCreator
 
-from .views import AuthorSelect, WritingModal, WriteSelect
 from .database import ShareDatabase
+from .views import AuthorSelect, WritingModal, WriteSelect
 
 if TYPE_CHECKING:
     from bot import BookShelf

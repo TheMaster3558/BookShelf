@@ -1,11 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import discord
-
-if TYPE_CHECKING:
-    from utils import AuthoredView
 
 
 MISSING = discord.utils.MISSING

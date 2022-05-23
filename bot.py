@@ -5,7 +5,7 @@ from discord.ext import commands
 
 
 class BookShelf(commands.Bot):
-    __version__ = '1.0.0a'
+    __version__ = '1.0.0agi'
 
     initial_extensions = (
         'cogs.share',
