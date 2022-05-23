@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 import aiosqlite
 import discord
@@ -12,10 +12,21 @@ from utils import AuthoredView, InteractionCreator
 
 from .views import AuthorSelect, WritingModal, WriteSelect
 from .database import ShareDatabase
-from .speed import get_max
 
 if TYPE_CHECKING:
     from bot import BookShelf
+
+
+K = TypeVar('K')
+V = TypeVar('V')
+
+
+# Cython faster
+try:
+    from .speed import get_max
+except ModuleNotFoundError:
+    def get_max(population: dict[K, V]) -> K:
+        return max(population, key=population.get)
 
 
 MISSING = discord.utils.MISSING
