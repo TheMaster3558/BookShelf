@@ -32,6 +32,7 @@ MISSING = discord.utils.MISSING
 
 
 class Share(ShareDatabase, commands.Cog):
+    """Share your writing with people around the world!"""
     def __init__(self, bot: BookShelf):
         self.bot = bot
         self.read_count: dict[str, int] = {}
@@ -53,7 +54,6 @@ class Share(ShareDatabase, commands.Cog):
         name='write',
         description='Write a story to share!'
     )
-    @app_commands.guilds(878431847162466354)
     async def app_write(self, interaction: discord.Interaction):
         modal = WritingModal()
         await interaction.response.send_modal(modal)
@@ -69,7 +69,6 @@ class Share(ShareDatabase, commands.Cog):
     @app_commands.describe(
         author='The user to read stories from'
     )
-    @app_commands.guilds(878431847162466354)
     async def hybrid_read(self, ctx: commands.Context, author: discord.User):
         full_author = str(author)
 
@@ -115,7 +114,6 @@ class Share(ShareDatabase, commands.Cog):
         name='popular',
         description='Get some popular authors in this server!'
     )
-    @app_commands.guilds(878431847162466354)
     async def hybrid_popular(self, ctx: commands.Context):
         popular = self.read_count.copy()
         popular_authors: list[str] = []
