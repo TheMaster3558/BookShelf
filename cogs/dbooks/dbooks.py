@@ -21,7 +21,7 @@ class DBooks(DBooksClient, commands.Cog):
         super().__init__()
 
     @commands.hybrid_command(
-        name='search',
+        name='searchbook',
         description='Search up a book on dbooks!'
     )
     @app_commands.describe(query='The book to search.')
