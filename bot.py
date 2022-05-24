@@ -5,10 +5,11 @@ from discord.ext import commands
 
 
 class BookShelf(commands.Bot):
-    __version__ = '1.0.0agi'
+    __version__ = '1.0.0ag'
 
     initial_extensions = (
         'cogs.share',
+        'cogs.dbooks'
     )
     test_guild = discord.Object(id=878431847162466354)
 
