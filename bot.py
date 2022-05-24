@@ -30,5 +30,5 @@ class BookShelf(commands.Bot):
             await self.load_extension(extension)
 
     async def on_ready(self):
-        await self.tree.sync(guild=self.test_guild)
+        await self.tree.sync()
         print(f'Logged in as {self.user} | {self.user.id}')
