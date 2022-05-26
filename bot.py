@@ -25,6 +25,12 @@ class BookShelf(commands.Bot):
         handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
         logger.addHandler(handler)
 
+        logger = logging.getLogger('asyncio')
+        logger.setLevel(logging.DEBUG)
+        handler = logging.FileHandler(filename='logs/asyncio.log', encoding='utf-8', mode='w')
+        handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+        logger.addHandler(handler)
+
     async def setup_hook(self) -> None:
         for extension in self.initial_extensions:
             await self.load_extension(extension)
