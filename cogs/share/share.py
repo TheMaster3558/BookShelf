@@ -16,16 +16,16 @@ if TYPE_CHECKING:
     from bot import BookShelf
 
 
-K = TypeVar('K')
-V = TypeVar('V')
-
-
 # Cython faster
 try:
     from .speed import get_max
-except ModuleNotFoundError:
+except ImportError:
+    K = TypeVar('K')
+    V = TypeVar('V')
+
+
     def get_max(population: dict[K, V]) -> K:
-        return max(population, key=population.get)
+        return max(population, key=population.get)  # type: ignore
 
 
 MISSING = discord.utils.MISSING
