@@ -29,3 +29,12 @@ class AuthoredView(discord.ui.View):
             return True
         await interaction.response.send_message('This is not for you', ephemeral=True)
         return False
+
+
+class VirtualContext:
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+    async def send(self, *args, **kwargs):
+        pass

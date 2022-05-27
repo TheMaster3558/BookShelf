@@ -9,7 +9,8 @@ class BookShelf(commands.Bot):
 
     initial_extensions = (
         'cogs.share',
-        'cogs.dbooks'
+        'cogs.dbooks',
+        'cogs.democracy'
     )
     test_guild = discord.Object(id=878431847162466354)
 
