@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 # Cython faster
 try:
-    from .speed import get_max
+    from cython.speed import get_max  # type: ignore
 except ImportError:
     K = TypeVar('K')
     V = TypeVar('V')
@@ -125,7 +125,7 @@ class Share(ShareDatabase, commands.Cog):
                 author = get_max(popular)
 
                 if not author:
-                    continue
+                    break
 
                 popular_authors.append(
                     author
