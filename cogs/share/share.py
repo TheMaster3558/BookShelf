@@ -35,7 +35,7 @@ class Share(ShareDatabase, commands.Cog):
     """Share your writing with people around the world!"""
     def __init__(self, bot: BookShelf):
         self.bot = bot
-        self.read_count: dict[str, int] = {}
+        self.read_count: dict[discord.User, int] = {}
 
         super().__init__()
 
@@ -48,7 +48,7 @@ class Share(ShareDatabase, commands.Cog):
         await ctx.send(view=creator)
         await creator.wait()
 
-        await self.app_write.callback(creator.interaction)
+        await self.app_write.callback(self, creator.interaction)
 
     @app_commands.command(
         name='write',
@@ -58,7 +58,7 @@ class Share(ShareDatabase, commands.Cog):
         modal = WritingModal()
         await interaction.response.send_modal(modal)
         await modal.wait()
-        msg = await self.process_write(str(interaction.user), *modal.get_values())
+        msg = await self.process_write(interaction.user, *modal.get_values())
 
         await interaction.followup.send(msg, ephemeral=True)
 
@@ -70,10 +70,8 @@ class Share(ShareDatabase, commands.Cog):
         author='The user to read stories from'
     )
     async def hybrid_read(self, ctx: commands.Context, author: discord.User):
-        full_author = str(author)
-
         try:
-            writes = await self.fetch_writes(full_author)
+            writes = await self.fetch_writes(author)
         except aiosqlite.OperationalError:
             await ctx.send(f'{author} has not written anything.')
             return
@@ -106,16 +104,20 @@ class Share(ShareDatabase, commands.Cog):
 
         await ctx.send(embeds=embeds, ephemeral=ephemeral)
 
-        if full_author not in self.read_count:
-            self.read_count[full_author] = 0
-        self.read_count[full_author] += 1
+        if author not in self.read_count:
+            self.read_count[author] = 0
+        self.read_count[author] += 1
 
     @commands.hybrid_command(
         name='popular',
         description='Get some popular authors in this server!'
     )
+    @commands.cooldown(1, 60, commands.BucketType.user)
     async def hybrid_popular(self, ctx: commands.Context):
-        popular = self.read_count.copy()
+        copy = self.read_count.copy()
+
+        popular = {k.name: v for k, v in copy.items()}
+        popular_ids = {user.name: user.id for user in copy}
         popular_authors: list[str] = []
 
         for _ in range(5):
@@ -134,7 +136,6 @@ class Share(ShareDatabase, commands.Cog):
 
         if len(popular_authors) < 1:
             await ctx.send('There are no popular authors in this server.', ephemeral=True)
-            return
 
         select = AuthorSelect(popular_authors)
         view = AuthoredView(ctx.author)
@@ -143,6 +144,7 @@ class Share(ShareDatabase, commands.Cog):
         await ctx.send(view=view)
         await view.wait()
 
-        author = select.author
+        author_id = popular_ids[select.author]
+        author = self.bot.get_user(author_id) or await self.bot.fetch_user(author_id)
 
         await self.hybrid_read.callback(self, ctx, author)

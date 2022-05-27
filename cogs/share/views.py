@@ -61,7 +61,7 @@ class WriteSelect(discord.ui.Select['AuthoredView']):
 
 
 class AuthorSelect(discord.ui.Select['AuthoredView']):
-    def __init__(self, names: list):
+    def __init__(self, names: list[str]):
         options = [
             discord.SelectOption(label=name) for name in names
         ]
