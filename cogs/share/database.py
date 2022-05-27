@@ -10,7 +10,7 @@ class ShareDatabase:
         self.db: aiosqlite.Connection = MISSING
 
     async def cog_load(self) -> None:
-        self.db = await aiosqlite.connect('./cogs/share.db')
+        self.db = await aiosqlite.connect('./cogs/share/share.db')
 
     async def cog_unload(self) -> None:
         await self.db.close()
