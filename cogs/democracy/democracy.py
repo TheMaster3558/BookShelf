@@ -6,7 +6,7 @@ from sqlite3 import OperationalError
 
 import discord
 from discord import app_commands
-from discord.ext import commands, tasks
+from discord.ext import commands, tasks  # type: ignore
 
 from .database import DemocracyDatabase
 from utils import VirtualContext
