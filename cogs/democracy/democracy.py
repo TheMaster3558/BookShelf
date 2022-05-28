@@ -65,6 +65,7 @@ class Democracy(DemocracyDatabase, commands.Cog):
             await ctx.send_help(ctx.command)
 
     @hybrid_election.command(
+        name='create',
         description='Create an election!'
     )
     @app_commands.describe(
@@ -72,7 +73,7 @@ class Democracy(DemocracyDatabase, commands.Cog):
         channel='The channel to send the election results in'
     )
     @commands.has_permissions(administrator=True)
-    async def create(self, ctx: commands.Context, expiry: int,
+    async def hybrid_create(self, ctx: commands.Context, expiry: int,
                      channel: discord.TextChannel = commands.CurrentChannel):
         if expiry not in range(1, 7):
             await ctx.send('The election must end in 1-7 days.', ephemeral=True)
@@ -86,12 +87,13 @@ class Democracy(DemocracyDatabase, commands.Cog):
         await ctx.send(msg)
 
     @hybrid_election.command(
+        name='vote',
         description='Vote for someone in an election!'
     )
     @app_commands.describe(
         member='The member to vote for'
     )
-    async def vote(self, ctx: commands.Context, member: discord.Member):
+    async def hybrid_vote(self, ctx: commands.Context, member: discord.Member):
         try:
             updated = await self.user_vote(ctx.author, member)
         except OperationalError:
@@ -106,10 +108,11 @@ class Democracy(DemocracyDatabase, commands.Cog):
         await ctx.send(text, ephemeral=True)
 
     @hybrid_election.command(
+        name='finish',
         description='Finish the election manually or early.'
     )
     @commands.has_permissions(administrator=True)
-    async def finish(self, ctx: commands.Context):
+    async def hybrid_finish(self, ctx: commands.Context):
         try:
             channel_id = (await self.get_end(ctx.guild))[0][2]      
             data = await self.finish_election(ctx.guild)
