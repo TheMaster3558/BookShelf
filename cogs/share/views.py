@@ -24,8 +24,6 @@ class WritingModal(discord.ui.Modal, title='Write a story'):
     )
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
-        child: discord.ui.TextInput
-
         await interaction.response.defer(ephemeral=True)
 
     def get_values(self) -> tuple[str, str]:
