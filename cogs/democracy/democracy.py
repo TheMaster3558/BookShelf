@@ -51,7 +51,7 @@ class Democracy(DemocracyDatabase, commands.Cog):
 
             guild = self.bot.get_channel(guild_id) or await self.bot.fetch_guild(guild_id)
             ctx: Any = VirtualContext(guild=guild)
-            self.bot.loop.create_task(self.finish(ctx))
+            self.bot.loop.create_task(self.hybrid_finish(ctx))
 
     @check_elections.before_loop
     async def wait_until_ready(self):
@@ -93,6 +93,7 @@ class Democracy(DemocracyDatabase, commands.Cog):
     @app_commands.describe(
         member='The member to vote for'
     )
+    @commands.guild_only()
     async def hybrid_vote(self, ctx: commands.Context, member: discord.Member):
         try:
             updated = await self.user_vote(ctx.author, member)

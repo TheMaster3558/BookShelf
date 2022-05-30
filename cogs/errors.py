@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING, Type, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Type
 
 import discord
 from discord.ext import commands
@@ -22,5 +24,11 @@ class ErrorHandler(commands.Cog):
             await ctx.send_help(ctx.command)
         elif isinstance(error, self.secret_perms):
             return
+        elif isinstance(error, commands.NoPrivateMessage):
+            await ctx.send(f'`{ctx.command.qualified_name} cannot be used in DMs.`')
         else:
             raise error
+
+
+async def setup(bot):
+    await bot.add_cog(ErrorHandler(bot))
