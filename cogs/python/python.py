@@ -72,3 +72,12 @@ class Python(AstevalEval, commands.Cog):
         ctx = await commands.Context.from_interaction(interaction)
         await self.message_eval(ctx, code=modal.code.value)
 
+    @commands.hybrid_command(
+        name='pep',
+        description='Python Enhancement Proposals'
+    )
+    async def hybrid_pep(self, ctx: commands.Context,
+                         pep: int = commands.parameter(converter=commands.Range[1, 7])):
+        ...
+
+

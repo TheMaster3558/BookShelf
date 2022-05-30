@@ -26,6 +26,9 @@ class ErrorHandler(commands.Cog):
             return
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send(f'`{ctx.command.qualified_name} cannot be used in DMs.`')
+        elif isinstance(error, commands.RangeError):
+            await ctx.send(f'"{ctx.current_argument}" must be {error.minimum}-{error.maximum}'
+                           f', not {error.value}.')
         else:
             raise error
 

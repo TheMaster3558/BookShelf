@@ -73,11 +73,9 @@ class Democracy(DemocracyDatabase, commands.Cog):
         channel='The channel to send the election results in'
     )
     @commands.has_permissions(administrator=True)
-    async def hybrid_create(self, ctx: commands.Context, expiry: int,
-                     channel: discord.TextChannel = commands.CurrentChannel):
-        if expiry not in range(1, 7):
-            await ctx.send('The election must end in 1-7 days.', ephemeral=True)
-            return
+    async def hybrid_create(self, ctx: commands.Context,
+                            expiry: int = commands.parameter(converter=commands.Range[1, 7]),
+                            channel: discord.TextChannel = commands.CurrentChannel):
         try:
             msg = await self.create_election(ctx.guild, expiry, channel)
         except OperationalError:
