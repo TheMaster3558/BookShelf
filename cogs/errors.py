@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class ErrorHandler(commands.Cog):
-    secret_perms: tuple[Type[commands.CheckFailure]] = (
+    secret_perms: tuple[Type[commands.CheckFailure], ...] = (
         commands.MissingPermissions,
         commands.NotOwner
     )

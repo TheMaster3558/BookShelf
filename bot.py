@@ -24,7 +24,7 @@ def setup_logging():
 
 def cythonize():
     import os
-    from Cython.Build import cythonize
+    from Cython.Build import cythonize  # type: ignore
 
     for file in os.listdir('./cython/'):
         if file.endswith('.pyx'):
