@@ -74,7 +74,7 @@ class Democracy(DemocracyDatabase, commands.Cog):
     )
     @commands.has_permissions(administrator=True)
     async def hybrid_create(self, ctx: commands.Context,
-                            expiry: int = commands.parameter(converter=commands.Range[1, 7]),
+                            expiry: int = commands.parameter(converter=commands.Range[int, 1, 7]),
                             channel: discord.TextChannel = commands.CurrentChannel):
         try:
             msg = await self.create_election(ctx.guild, expiry, channel)

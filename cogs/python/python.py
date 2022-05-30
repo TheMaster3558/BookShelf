@@ -77,7 +77,7 @@ class Python(AstevalEval, commands.Cog):
         description='Python Enhancement Proposals'
     )
     async def hybrid_pep(self, ctx: commands.Context,
-                         pep: int = commands.parameter(converter=commands.Range[1, 7])):
+                         pep: int = commands.parameter(converter=commands.Range[int, 1, 7])):
         ...
 
 
