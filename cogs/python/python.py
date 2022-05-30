@@ -9,13 +9,14 @@ from discord import app_commands
 from discord.ext import commands
 
 from .eval import AstevalEval, code_block_converter
+from .pep import PEPs
 from .views import CodeModal
 
 if TYPE_CHECKING:
     from bot import BookShelf
 
 
-class Python(AstevalEval, commands.Cog):
+class Python(AstevalEval, PEPs, commands.Cog):
     zen: ClassVar[str] = ''
 
     def __init__(self, bot: BookShelf):
@@ -76,8 +77,12 @@ class Python(AstevalEval, commands.Cog):
         name='pep',
         description='Python Enhancement Proposals'
     )
+    @app_commands.describe(
+        name='The PEP number'
+    )
     async def hybrid_pep(self, ctx: commands.Context,
-                         pep: int = commands.parameter(converter=commands.Range[int, 1, 7])):
-        ...
+                         pep: int):
+        embed = self.get_pep(str(pep))
+        await ctx.send(embed=embed)
 
 
