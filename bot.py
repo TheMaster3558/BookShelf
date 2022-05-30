@@ -38,7 +38,8 @@ class BookShelf(commands.Bot):
         'cogs.share',
         'cogs.dbooks',
         'cogs.democracy',
-        'cogs.python'
+        'cogs.python',
+        'cogs.errors'
     )
     test_guild = discord.Object(id=878431847162466354)
 
