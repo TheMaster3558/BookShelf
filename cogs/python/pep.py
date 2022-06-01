@@ -15,11 +15,17 @@ class PEPs:
     bot: BookShelf
 
     URL: ClassVar[str] = 'https://peps.python.org/api/peps.json'
-    peps: dict[str, dict]
+    peps: dict[str, dict] = {}
+    all_names: dict[str, str]
 
     async def cog_load(self):
+        cls = self.__class__
+
         async with self.bot.session.get(self.URL) as resp:
-            self.__class__.peps = await resp.json()
+            cls.peps = await resp.json()
+        cls.all_names = {
+            f'{k} - {v["title"]}': k for k, v in self.__class__.peps.items()
+        }
 
     def get_pep(self, pep: str) -> discord.Embed:
         if pep not in self.peps:

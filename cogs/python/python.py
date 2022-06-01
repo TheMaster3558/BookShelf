@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import contextlib
 import io
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, TypeVar
 
 import discord
 from discord import app_commands
 from discord.ext import commands
+from fuzzywuzzy import fuzz
 
 from .eval import AstevalEval, code_block_converter
 from .pep import PEPs
@@ -78,11 +79,25 @@ class Python(AstevalEval, PEPs, commands.Cog):
         description='Python Enhancement Proposals'
     )
     @app_commands.describe(
-        name='The PEP number'
+        pep='The PEP number'
     )
     async def hybrid_pep(self, ctx: commands.Context,
-                         pep: int):
-        embed = self.get_pep(str(pep))
+                         pep: str):
+        embed = self.get_pep(pep)
         await ctx.send(embed=embed)
 
+    @hybrid_pep.autocomplete('pep')
+    async def pep_pep_autocomplete(self, interaction: discord.Interaction, current: str):
+        current = current.lower()
+        names: list[app_commands.Choice[str]] = []
+        for name, key in self.all_names.items():
+            name = name.lower()
 
+            if fuzz.token_sort_ratio(current, name) > 65 or current in name:
+                names.append(
+                    app_commands.Choice(
+                        name=name,
+                        value=key
+                    )
+                )
+        return names

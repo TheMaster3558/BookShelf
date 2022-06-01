@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import sys
+import traceback
 from typing import TYPE_CHECKING, Type
 
-import discord
 from discord.ext import commands
 
 if TYPE_CHECKING:
@@ -30,7 +31,12 @@ class ErrorHandler(commands.Cog):
             await ctx.send(f'"{ctx.current_parameter.name}" must be `{error.minimum}-{error.maximum}`'
                            f', not `{error.value}`.')
         else:
-            raise error
+            traceback.print_exception(
+                type(error),
+                error,
+                error.__traceback__,
+                file=sys.stderr
+            )
 
 
 async def setup(bot):
