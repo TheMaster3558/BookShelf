@@ -30,6 +30,8 @@ class ErrorHandler(commands.Cog):
         elif isinstance(error, commands.RangeError):
             await ctx.send(f'"{ctx.current_parameter.name}" must be `{error.minimum}-{error.maximum}`'
                            f', not `{error.value}`.')
+        elif isinstance(error, (commands.MemberNotFound, commands.UserNotFound)):
+            await ctx.send('That user was not found.')
         else:
             traceback.print_exception(
                 type(error),
