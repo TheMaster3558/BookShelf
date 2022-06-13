@@ -3,7 +3,7 @@ from io import BytesIO
 from typing import Any, Generator
 
 import discord
-from colorgram import extract
+from colorgram import extract  # type: ignore
 
 
 def get_perms_name(perms: discord.Permissions) -> Generator[str, Any, Any]:
@@ -34,6 +34,8 @@ class EmbedBuilder:
 
     @classmethod
     def build_member_embed(cls, member: discord.Member) -> discord.Embed:
+        assert member.joined_at is not None
+
         embed = cls.build_user_embed(member)
         embed.add_field(
             name='Joined Server',
@@ -68,7 +70,7 @@ class EmbedBuilder:
 
             colors = await asyncio.to_thread(extract, file, 1)
             r, g, b = colors[0].rgb
-            embed.color = discord.Color.from_rgb(r, g, b)  # property has setter
+            embed.color = discord.Color.from_rgb(r, g, b)  # type: ignore # property has setter
 
         embed.add_field(
             name='Created',
@@ -100,3 +102,18 @@ class EmbedBuilder:
         )
 
         return embed
+
+    @staticmethod
+    def build_base_channel_embed(channel: discord.abc.GuildChannel) -> discord.Embed:
+        embed = discord.Embed(
+            title=channel.name,
+            timestamp=discord.utils.utcnow()
+        )
+        embed.add_field(
+            name='Mention',
+            value=channel.mention
+        )
+        embed.set_footer(text=f'Channel ID: {channel.id}')
+
+        return embed
+

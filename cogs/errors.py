@@ -23,15 +23,20 @@ class ErrorHandler(commands.Cog):
     async def on_command_error(self, ctx: commands.Context, error: Exception):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help(ctx.command)
+
         elif isinstance(error, self.secret_perms):
             return
+
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send(f'`{ctx.command.qualified_name} cannot be used in DMs.`')
+
         elif isinstance(error, commands.RangeError):
             await ctx.send(f'"{ctx.current_parameter.name}" must be `{error.minimum}-{error.maximum}`'
                            f', not `{error.value}`.')
-        elif isinstance(error, (commands.MemberNotFound, commands.UserNotFound)):
-            await ctx.send('That user was not found.')
+
+        elif isinstance(error, commands.BadArgument):
+            await self.bad_argument_handler(ctx, error)
+
         else:
             traceback.print_exception(
                 type(error),
@@ -39,6 +44,12 @@ class ErrorHandler(commands.Cog):
                 error.__traceback__,
                 file=sys.stderr
             )
+
+    async def bad_argument_handler(self, ctx: commands.Context, error: commands.BadArgument):
+        if isinstance(error, (commands.MemberNotFound, commands.UserNotFound)):
+            await ctx.send('That user was not found.')
+        elif isinstance(error, commands.ChannelNotFound):
+            await ctx.send(f'I couldn\' convert that to a channel.')
 
 
 async def setup(bot):

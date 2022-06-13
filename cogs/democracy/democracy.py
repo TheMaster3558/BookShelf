@@ -58,7 +58,8 @@ class Democracy(DemocracyDatabase, commands.Cog):
         await self.bot.wait_until_ready()
                 
     @commands.hybrid_group(
-        name='election'
+        name='election',
+        description='Set up a democratic election!'
     )
     async def hybrid_election(self, ctx: commands.Context):
         if ctx.invoked_subcommand is None:

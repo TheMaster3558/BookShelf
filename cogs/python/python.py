@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import contextlib
 import io
-from typing import TYPE_CHECKING, ClassVar, TypeVar
+from typing import TYPE_CHECKING, ClassVar
 
 import discord
 from discord import app_commands
 from discord.ext import commands
-from fuzzywuzzy import fuzz
+from fuzzywuzzy import fuzz  # type: ignore
 
 from .eval import AstevalEval, code_block_converter
 from .pep import PEPs
@@ -76,7 +76,7 @@ class Python(AstevalEval, PEPs, commands.Cog):
 
     @commands.hybrid_command(
         name='pep',
-        description='Python Enhancement Proposals'
+        description='Python Enhancement Proposals.'
     )
     @app_commands.describe(
         pep='The PEP number'

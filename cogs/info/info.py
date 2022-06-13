@@ -23,7 +23,8 @@ class Info(EmbedBuilder, commands.Cog):
     @app_commands.describe(
         user='The user to get info from'
     )
-    async def hybrid_userinfo(self, ctx: commands.Context, user: discord.Member | discord.User):
+    async def hybrid_userinfo(self, ctx: commands.Context,
+                              user: discord.Member | discord.User = commands.Author):
         if isinstance(user, discord.Member):
             embed = self.build_member_embed(user)
         else:

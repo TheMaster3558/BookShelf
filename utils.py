@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from math import ceil
 from typing import Optional
 
 import discord
+import numpy
 
 
 MISSING = discord.utils.MISSING
@@ -38,3 +40,10 @@ class VirtualContext:
 
     async def send(self, *args, **kwargs):
         pass
+
+
+async def split_embeds(embeds: list[discord.Embed], channel: discord.abc.Messageable) -> None:
+    embeds_list = [list(array) for array in numpy.array_split(embeds, ceil(len(embeds) / 10))]
+
+    for embeds in embeds_list:
+        await channel.send(embeds=embeds)
