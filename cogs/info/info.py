@@ -34,10 +34,18 @@ class Info(EmbedBuilder, commands.Cog):
 
     @commands.hybrid_command(
         name='serverinfo',
-        description='Get info about a server',
+        description='Get info about a server.',
         aliases=['guildinfo']
     )
     @commands.guild_only()
     async def hybrid_serverinfo(self, ctx: commands.Context):
         embed = await self.build_guild_embed(ctx.guild)
+        await ctx.send(embed=embed)
+
+    @commands.hybrid_command(
+        name='roleinfo',
+        description='Get info about a role.'
+    )
+    async def hybrid_roleinfo(self, ctx: commands.Context, role: discord.Role):
+        embed = self.build_role_embed(role)
         await ctx.send(embed=embed)

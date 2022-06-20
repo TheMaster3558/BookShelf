@@ -117,3 +117,46 @@ class EmbedBuilder:
 
         return embed
 
+    @staticmethod
+    def build_role_embed(role: discord.Role) -> discord.Embed:
+        embed = discord.Embed(
+            title=role.name,
+            description=role.mention,
+            color=role.color,
+            timestamp=discord.utils.utcnow()
+        )
+        embed.add_field(
+            name='Created At',
+            value=discord.utils.format_dt(role.created_at)
+        )
+        embed.add_field(
+            name='Bot Role',
+            value=role.is_bot_managed()
+        )
+        embed.add_field(
+            name='Nitro Role',
+            value=role.is_premium_subscriber()
+        )
+        embed.add_field(
+            name='Member Count',
+            value=len(role.mention)
+        )
+        embed.add_field(
+            name='Hierarchy Position',
+            value=role.position
+        )
+        embed.add_field(
+            name='Permissions',
+            value=', '.join(get_perms_name(role.permissions)),
+            inline=False
+        )
+
+        if role.icon:
+            icon = role.icon.url
+        else:
+            icon = None
+
+        embed.set_footer(text=f'Role ID: {role.id}', icon_url=icon)
+
+        return embed
+
