@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 import aiohttp
@@ -53,8 +54,6 @@ class BookShelf(commands.Bot):
 
         self.session: aiohttp.ClientSession = MISSING
 
-        setup_logging()
-
     async def setup_hook(self) -> None:
         self.session = aiohttp.ClientSession()
 
@@ -69,3 +68,13 @@ class BookShelf(commands.Bot):
     async def on_ready(self):
         print(f'Logged in as {self.user} | {self.user.id}')
         await self.tree.sync()
+
+    def run(self, token: str, reconnect: bool = True, log: bool = True) -> None:
+        async def runner():
+            if log:
+                setup_logging()
+
+            async with self:
+                await self.start(token, reconnect=reconnect)
+
+        asyncio.run(runner(), debug=True)
