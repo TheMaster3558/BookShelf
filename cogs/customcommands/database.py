@@ -10,7 +10,6 @@ from discord.ext import commands
 from .arguments import Argument
 from .context import CustomCommandContext, MiniContext
 
-
 if TYPE_CHECKING:
     from bot import BookShelf
 
