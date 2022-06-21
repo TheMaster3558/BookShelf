@@ -1,8 +1,8 @@
 from typing import TypeVar
 
 
-K = TypeVar('K')
-V = TypeVar('V')
+KT = TypeVar('KT')
+VT = TypeVar('VT')
 
 
-def get_max(population: dict[K, V]) -> K: ...
+def get_max(population: dict[KT, VT]) -> KT: ...
