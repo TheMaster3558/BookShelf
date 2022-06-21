@@ -55,7 +55,7 @@ class CommandStorage:
         @commands.check(lambda cctx: cctx.guild.id == ctx.guild.id)
         async def custom_command(cctx: commands.Context, *new_args):
             if len(new_args) < len([arg for arg in args if arg.default is not None]):  # type: ignore
-                await ctx.send_help(cctx.command)
+                await cctx.send_help(cctx.command)
                 return
 
             mutable_args = list(new_args)

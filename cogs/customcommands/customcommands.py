@@ -78,7 +78,7 @@ class CustomCommands(CommandStorage, commands.Cog):
                 break
 
             if msg.content == 'cancel':
-                return
+                return None
 
             name = msg.content
             annotation = words_to_annotation.get(msg.content)
@@ -92,11 +92,11 @@ class CustomCommands(CommandStorage, commands.Cog):
             if default_msg.content == 'required':
                 if optional_yet:
                     await ctx.send('You can\'t have a required argument after an optional argument.')
-                    return
+                    return None
 
                 default = None
             elif default_msg.content == 'cancel':
-                return
+                return None
             else:
                 default = default_msg.content
                 optional_yet = True
