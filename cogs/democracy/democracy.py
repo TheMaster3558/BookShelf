@@ -56,7 +56,7 @@ class Democracy(DemocracyDatabase, commands.Cog):
     @check_elections.before_loop
     async def wait_until_ready(self):
         await self.bot.wait_until_ready()
-                
+
     @commands.hybrid_group(
         name='election',
         description='Set up a democratic election!'

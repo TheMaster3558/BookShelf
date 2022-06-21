@@ -42,7 +42,8 @@ class BookShelf(commands.Bot):
         'cogs.python',
         'cogs.errors',
         'cogs.info',
-        'cogs.help'
+        'cogs.help',
+        'cogs.customcommands'
     )
     test_guild = discord.Object(id=878431847162466354)
 

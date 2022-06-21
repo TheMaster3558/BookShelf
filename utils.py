@@ -43,7 +43,7 @@ class VirtualContext:
 
 
 async def split_embeds(embeds: list[discord.Embed], channel: discord.abc.Messageable) -> None:
-    embeds_list = [list(array) for array in numpy.array_split(embeds, ceil(len(embeds) / 10))]
+    embeds_list = [list(array) for array in numpy.array_split(embeds, ceil(len(embeds) / 10))]  # type: ignore
 
     for embeds in embeds_list:
         await channel.send(embeds=embeds)

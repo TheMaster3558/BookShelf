@@ -20,7 +20,7 @@ class HelpCommand(commands.HelpCommand):
     ):
         embeds = list(embeds)
 
-        if not channel:
+        if channel is None:
             channel = self.get_destination()
 
         if embed:
@@ -55,6 +55,9 @@ class HelpCommand(commands.HelpCommand):
         return embed
 
     async def send_command_help(self, command: commands.Command) -> None:
+        if not await command.can_run(self.context):
+            return
+
         embed = self.get_command_embed(command)
         await self.send(embed)
 
@@ -73,6 +76,9 @@ class HelpCommand(commands.HelpCommand):
         return embed
 
     async def send_group_help(self, group: commands.Group) -> None:
+        if not group.can_run(self.context):
+            return
+
         embed = self.get_group_embed(group)
         await self.send(embed)
 

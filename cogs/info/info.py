@@ -46,6 +46,9 @@ class Info(EmbedBuilder, commands.Cog):
         name='roleinfo',
         description='Get info about a role.'
     )
+    @app_commands.describe(
+        role='The role to get info from'
+    )
     async def hybrid_roleinfo(self, ctx: commands.Context, role: discord.Role):
         embed = self.build_role_embed(role)
         await ctx.send(embed=embed)
