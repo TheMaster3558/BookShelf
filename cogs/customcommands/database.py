@@ -134,3 +134,9 @@ class Command(commands.Command):
             if isinstance(error.original, ValueError):
                 await ctx.send('The `output` for this command may have not been formatted correctly.'
                                'Try deleting and remaking it.')
+
+                return
+        if isinstance(error, commands.CheckFailure):
+            return
+
+        raise error
