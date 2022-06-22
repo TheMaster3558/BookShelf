@@ -106,7 +106,7 @@ class CustomCommands(CommandStorage, commands.Cog):
 
         return args
 
-    async def ask_for_output(self, ctx: commands.Context, check):
+    async def ask_for_output(self, ctx: commands.Context, check) -> str:
         await ctx.send('Now send the output. You can use brackets `{}` to place arguments or use `ctx`. '
                        'For example, if the arguments were `user` and `number`, '
                        '`{user.name} drank {number} cups of water in {ctx.channel.name}`')
@@ -119,7 +119,7 @@ class CustomCommands(CommandStorage, commands.Cog):
         aliases=['customcommand', 'cc']
     )
     async def message_customcommands(self, ctx: commands.Context):
-        if ctx.subcommand_passed is None:
+        if ctx.invoked_subcommand is None:
             await ctx.send_help(ctx.command)
 
     @message_customcommands.command(

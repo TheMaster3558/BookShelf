@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 MISSING = discord.utils.MISSING
 
 
-async def run_converters(ctx: commands.Context, args: list[Argument], new_args: MutableSequence) -> MutableSequence:
+async def run_converters(ctx: commands.Context, args: list[Argument], new_args: list) -> list:
     limited_ctx = CustomCommandContext(ctx)
 
     for index, arg in enumerate(args):
@@ -41,11 +41,12 @@ async def run_converters(ctx: commands.Context, args: list[Argument], new_args: 
 
 class CommandStorage:
     bot: BookShelf
-    commands_to_store: list[Command] = []
 
-    @classmethod
+    def __init__(self):
+        self.commands_to_store: list[Command] = []
+
     def create_command(
-            cls, *, name: str, args: list[Argument], output: str, ctx: commands.Context | MiniContext
+            self, *, name: str, args: list[Argument], output: str, ctx: commands.Context | MiniContext
     ) -> Command:
         @commands.command(
             name=name,
@@ -69,16 +70,15 @@ class CommandStorage:
         custom_command.ctx = MiniContext(ctx)
         custom_command.args = args
 
-        cls.commands_to_store.append(custom_command)
+        self.commands_to_store.append(custom_command)
 
         return custom_command
 
-    @classmethod
-    async def to_file(cls):
-        data = [command.to_dict() for command in cls.commands_to_store]
+    async def to_file(self):
+        data = [command.to_dict() for command in self.commands_to_store]
 
         async with aiofiles.open('./cogs/customcommands/command_storage.json', 'w') as file:
-            dumped = json.dumps(data)
+            dumped = json.dumps(data, indent=4)
             await file.write(dumped)
 
     async def from_file(self):
@@ -134,7 +134,6 @@ class Command(commands.Command):
             if isinstance(error.original, ValueError):
                 await ctx.send('The `output` for this command may have not been formatted correctly.'
                                'Try deleting and remaking it.')
-
                 return
         if isinstance(error, commands.CheckFailure):
             return
