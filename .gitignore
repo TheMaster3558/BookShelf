@@ -21,6 +21,7 @@ main.py
 
 # databases
 *.db
+*.json
 
 # secrets
 *.env

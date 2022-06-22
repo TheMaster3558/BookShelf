@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import aiofiles
 import json
-from typing import TYPE_CHECKING, MutableSequence
+from typing import TYPE_CHECKING
 
 import discord
 from discord.ext import commands
 
 from .arguments import Argument
+from .command import CustomCommand
 from .context import CustomCommandContext, MiniContext
 
 if TYPE_CHECKING:
@@ -43,15 +44,15 @@ class CommandStorage:
     bot: BookShelf
 
     def __init__(self):
-        self.commands_to_store: list[Command] = []
+        self.commands_to_store: list[CustomCommand] = []
 
     def create_command(
             self, *, name: str, args: list[Argument], output: str, ctx: commands.Context | MiniContext
-    ) -> Command:
+    ) -> CustomCommand:
         @commands.command(
             name=name,
             description=f'Created by {ctx.author}',
-            cls=Command
+            cls=CustomCommand
         )
         @commands.check(lambda cctx: cctx.guild.id == ctx.guild.id)
         async def custom_command(cctx: commands.Context, *new_args):
@@ -111,31 +112,4 @@ class CommandStorage:
         await self.to_file()
 
 
-class Command(commands.Command):
-    def __init__(self, func, **kwargs):
-        super().__init__(func, **kwargs)
-        self.output: str = MISSING
-        self.ctx: MiniContext = MISSING
-        self.args: list[Argument] = MISSING
 
-    def to_dict(self) -> dict:
-        data = {
-            'name': self.name,
-            'ctx': self.ctx.to_dict(),
-            'output': self.output,
-            'args': [
-                arg.to_dict() for arg in self.args
-            ]
-        }
-        return data
-
-    async def error_handler(self, ctx: commands.Context, error: commands.CommandError):
-        if isinstance(error, commands.CommandInvokeError):
-            if isinstance(error.original, ValueError):
-                await ctx.send('The `output` for this command may have not been formatted correctly.'
-                               'Try deleting and remaking it.')
-                return
-        if isinstance(error, commands.CheckFailure):
-            return
-
-        raise error

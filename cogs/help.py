@@ -6,6 +6,7 @@ import discord
 from discord.ext import commands
 
 from utils import split_embeds
+from cogs.customcommands import CustomCommand
 
 if TYPE_CHECKING:
     from bot import BookShelf
@@ -76,13 +77,13 @@ class HelpCommand(commands.HelpCommand):
         return embed
 
     async def send_group_help(self, group: commands.Group) -> None:
-        if not group.can_run(self.context):
+        if not await group.can_run(self.context):
             return
 
         embed = self.get_group_embed(group)
         await self.send(embed)
 
-    def get_cog_embed(self, cog: commands.Cog) -> discord.Embed:
+    async def get_cog_embed(self, cog: commands.Cog) -> discord.Embed:
         embed = discord.Embed(
             title=cog.qualified_name,
             description=cog.description
@@ -97,8 +98,27 @@ class HelpCommand(commands.HelpCommand):
         return embed
 
     async def send_cog_help(self, cog: commands.Cog) -> None:
-        embed = self.get_cog_embed(cog)
+        embed = await self.get_cog_embed(cog)
         await self.send(embed)
+
+    def get_command_signature(self, command: commands.Command) -> str:
+        if not isinstance(command, CustomCommand):
+            return super().get_command_signature(command)
+
+        start = f'{self.context.clean_prefix}{command.qualified_name} '
+
+        for arg in command.args:
+            arg_text = arg.name
+
+            if arg.default:
+                arg_text += f'={arg.default}'
+                arg_text = f'[{arg_text}]'
+            else:
+                arg_text = f'<{arg_text}>'
+            arg_text += ' '
+            start += arg_text
+
+        return start.rstrip()
 
 
 class Help(commands.Cog):

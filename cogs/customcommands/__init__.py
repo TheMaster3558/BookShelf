@@ -1,3 +1,4 @@
+from .command import CustomCommand
 from .customcommands import CustomCommands
 
 
