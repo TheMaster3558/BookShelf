@@ -36,7 +36,7 @@ class HelpCommand(commands.HelpCommand):
             embed = None
 
             if cog and cmds:
-                embed = self.get_cog_embed(cog)
+                embed = await self.get_cog_embed(cog)
 
             if embed:
                 embeds.append(embed)
