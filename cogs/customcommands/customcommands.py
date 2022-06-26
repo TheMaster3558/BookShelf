@@ -163,6 +163,3 @@ class CustomCommands(CommandStorage, commands.Cog):
                 return
 
         await ctx.send('That command was not found.')
-
-
-
