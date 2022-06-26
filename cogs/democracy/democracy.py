@@ -27,6 +27,7 @@ except ImportError:
 
 
 class Democracy(DemocracyDatabase, commands.Cog):
+    """A very simple implementation of democracy on discord."""
     def __init__(self, bot: BookShelf):
         self.bot = bot
 

@@ -21,6 +21,7 @@ words_to_annotation: dict[str, type] = {
 
 
 class CustomCommands(CommandStorage, commands.Cog):
+    """Create custom commands for your server!"""
     def __init__(self, bot: BookShelf):
         self.bot = bot
         super().__init__()

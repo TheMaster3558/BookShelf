@@ -32,7 +32,7 @@ MISSING = discord.utils.MISSING
 
 
 class Share(ShareDatabase, commands.Cog):
-    """Share your writing with people around the world!"""
+    """Share your writing with others!"""
     def __init__(self, bot: BookShelf):
         self.bot = bot
         self.read_count: dict[discord.User, int] = {}

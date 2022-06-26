@@ -18,6 +18,8 @@ if TYPE_CHECKING:
 
 
 class Python(AstevalEval, PEPs, commands.Cog):
+    """Eval, PEP's, and more!"""
+
     zen: ClassVar[str] = ''
 
     def __init__(self, bot: BookShelf):

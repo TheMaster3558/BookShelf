@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 
 class Info(EmbedBuilder, commands.Cog):
+    """Get info about roles, members, etc."""
     def __init__(self, bot: BookShelf):
         self.bot = bot
 

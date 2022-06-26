@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 class DBooks(DBooksClient, commands.Cog):
-    """Commands for Dbooks api. Note that a lot of books are **not** on this."""
+    """Use the DBooks API (Which totally has all the books)."""
     def __init__(self, bot: BookShelf):
         self.bot = bot
 

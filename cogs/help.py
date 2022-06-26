@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 
 from utils import split_embeds
-from cogs.customcommands import CustomCommand
+from cogs.customcommands import CustomCommand  # type: ignore
 
 if TYPE_CHECKING:
     from bot import BookShelf
@@ -83,13 +83,28 @@ class HelpCommand(commands.HelpCommand):
         embed = self.get_group_embed(group)
         await self.send(embed)
 
+    async def get_runnable_commands(self, cog: commands.Cog) -> list[commands.Command]:
+        command_list: dict[commands.Command, bool] = {}
+
+        async def check(command: commands.Command):
+            if await command.can_run(self.context):
+                canrun = True
+            else:
+                canrun = False
+            command_list[command] = canrun
+
+        for cmd in cog.walk_commands():
+            await check(cmd)
+
+        return [command for command in cog.walk_commands() if command_list[command] is True]
+
     async def get_cog_embed(self, cog: commands.Cog) -> discord.Embed:
         embed = discord.Embed(
             title=cog.qualified_name,
             description=cog.description
         )
 
-        for command in cog.walk_commands():
+        for command in await self.get_runnable_commands(cog):
             embed.add_field(
                 name=f'`{self.get_command_signature(command)}`',
                 value=command.description
