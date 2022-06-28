@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import aiofiles
 import json
 from typing import TYPE_CHECKING
 
+import aiofiles
 import discord
 from discord.ext import commands
 
@@ -77,9 +77,9 @@ class CommandStorage:
 
     async def to_file(self):
         data = [command.to_dict() for command in self.commands_to_store]
+        dumped = json.dumps(data, indent=4)
 
         async with aiofiles.open('./cogs/customcommands/command_storage.json', 'w') as file:
-            dumped = json.dumps(data, indent=4)
             await file.write(dumped)
 
     async def from_file(self):

@@ -1,18 +1,25 @@
 import asyncio
+import datetime
 from io import BytesIO
 from typing import Any, Generator
 
 import discord
 from colorgram import extract  # type: ignore
 
+from .database import EmbedStorage
+
 
 def get_perms_name(perms: discord.Permissions) -> Generator[str, Any, Any]:
     return (perm.capitalize().replace('_', ' ') for perm, value in perms if value)
 
 
-class EmbedBuilder:
-    @staticmethod
-    def build_user_embed(user: discord.User | discord.Member) -> discord.Embed:
+class EmbedBuilder(EmbedStorage):
+    def build_user_embed(self, user: discord.User | discord.Member, date: datetime.datetime | None
+                         ) -> discord.Embed:
+        maybe = self.get(user, date)
+        if maybe:
+            return maybe
+
         embed = discord.Embed(
             title=str(user),
             description=user.mention,
@@ -30,13 +37,19 @@ class EmbedBuilder:
             value=discord.utils.format_dt(user.created_at)
         )
 
+        if isinstance(user, discord.User):
+            self.insert(user.id, embed, 'user')
+
         return embed
 
-    @classmethod
-    def build_member_embed(cls, member: discord.Member) -> discord.Embed:
+    def build_member_embed(self, member: discord.Member, date: datetime.datetime | None) -> discord.Embed:
         assert member.joined_at is not None
 
-        embed = cls.build_user_embed(member)
+        maybe = self.get(member, date)
+        if maybe:
+            return maybe
+
+        embed = self.build_user_embed(member, date)
         embed.add_field(
             name='Joined Server',
             value=discord.utils.format_dt(member.joined_at)
@@ -51,10 +64,15 @@ class EmbedBuilder:
             value=', '.join(get_perms_name(member.guild_permissions))
         )
 
+        self.insert(member.id, embed, 'member')
+
         return embed
 
-    @staticmethod
-    async def build_guild_embed(guild: discord.Guild) -> discord.Embed:
+    async def build_guild_embed(self, guild: discord.Guild, date: datetime.datetime | None) -> discord.Embed:
+        maybe = self.get(guild, date)
+        if maybe:
+            return maybe
+
         embed = discord.Embed(
             title=guild.name,
             timestamp=discord.utils.utcnow()
@@ -101,24 +119,15 @@ class EmbedBuilder:
             value=' '.join(role.mention for role in reversed(guild.roles))
         )
 
-        return embed
-
-    @staticmethod
-    def build_base_channel_embed(channel: discord.abc.GuildChannel) -> discord.Embed:
-        embed = discord.Embed(
-            title=channel.name,
-            timestamp=discord.utils.utcnow()
-        )
-        embed.add_field(
-            name='Mention',
-            value=channel.mention
-        )
-        embed.set_footer(text=f'Channel ID: {channel.id}')
+        self.insert(guild.id, embed, 'guild')
 
         return embed
 
-    @staticmethod
-    def build_role_embed(role: discord.Role) -> discord.Embed:
+    def build_role_embed(self, role: discord.Role, date: datetime.datetime | None) -> discord.Embed:
+        maybe = self.get(role, date)
+        if maybe:
+            return maybe
+
         embed = discord.Embed(
             title=role.name,
             description=role.mention,
@@ -157,6 +166,8 @@ class EmbedBuilder:
             icon = None
 
         embed.set_footer(text=f'Role ID: {role.id}', icon_url=icon)
+
+        self.insert(role.id, embed, 'role')
 
         return embed
 

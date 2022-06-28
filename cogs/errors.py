@@ -50,6 +50,8 @@ class ErrorHandler(commands.Cog):
             await ctx.send('That user was not found.')
         elif isinstance(error, commands.ChannelNotFound):
             await ctx.send(f'I couldn\' convert that to a channel.')
+        else:
+            await ctx.send(str(error))
 
 
 async def setup(bot):
