@@ -38,13 +38,17 @@ class NASA(Database, NASAClient, commands.Cog):
 
     def __init__(self, bot: BookShelf):
         self.bot = bot
+        self.first_start = True
+        self.dates_done: list[str] = []
         super().__init__()
 
     async def cog_load(self):
         await super().cog_load()
+        self.first_start = True
         self.autopost_apod.start()
 
     async def cog_unload(self):
+        self.first_start = False
         self.autopost_apod.cancel()
         await super().cog_unload()
 
@@ -52,7 +56,16 @@ class NASA(Database, NASAClient, commands.Cog):
     async def autopost_apod(self):
         date = self.get_date().strftime('%Y-%m-%d')
         if not await self.apod(date):
+            if not self.first_start:
+                return
+
+            date = (self.get_date() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+            if not await self.apod(date):
+                return
+
+        if date in self.dates_done:
             return
+        self.dates_done.append(date)
 
         for channel_tuple in await self.get_channels():
             channel_id = channel_tuple[0]
@@ -62,7 +75,7 @@ class NASA(Database, NASAClient, commands.Cog):
                 continue
 
             ctx = VirtualContext(channel=channel, author=None)
-            await self.hybrid_apod.callback(self, ctx)
+            await self.hybrid_apod.callback(self, ctx, date)
 
     @autopost_apod.before_loop
     async def wait_until_ready(self):
