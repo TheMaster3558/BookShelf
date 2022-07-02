@@ -17,7 +17,6 @@ class DBooks(DBooksClient, commands.Cog):
     """Use the DBooks API (Which totally has all the books)."""
     def __init__(self, bot: BookShelf):
         self.bot = bot
-
         super().__init__()
 
     @commands.hybrid_command(

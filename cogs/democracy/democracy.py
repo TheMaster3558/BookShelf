@@ -30,7 +30,6 @@ class Democracy(DemocracyDatabase, commands.Cog):
     """A very simple implementation of democracy on discord."""
     def __init__(self, bot: BookShelf):
         self.bot = bot
-
         super().__init__()
 
     async def cog_load(self) -> None:
@@ -117,7 +116,7 @@ class Democracy(DemocracyDatabase, commands.Cog):
         try:
             channel_id = (await self.get_end(ctx.guild))[0][2]      
             data = await self.finish_election(ctx.guild)
-        except OperationalError:
+        except (OperationalError, IndexError):
             await ctx.send('There is no election happening.', ephemeral=True)
             return
 

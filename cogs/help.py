@@ -52,6 +52,12 @@ class HelpCommand(commands.HelpCommand):
             name='Usage',
             value=f'```{self.get_command_signature(command)}```'
         )
+        if 'flags' in command.extras:
+            flags = '\n'.join(f'`{name}`: {description}' for name, description in command.extras['flags'].items())
+            embed.add_field(
+                name='Flags',
+                value=flags
+            )
 
         return embed
 
@@ -139,11 +145,12 @@ class HelpCommand(commands.HelpCommand):
 class Help(commands.Cog):
     def __init__(self, bot: BookShelf):
         self.bot = bot
+        super().__init__()
 
     async def cog_load(self) -> None:
         help_command = HelpCommand()
         help_command.cog = self
-        help_command._command_impl.description = f'The help command for {self.bot.user.name}.'
+        help_command._command_impl.explanation = f'The help command for {self.bot.user.name}.'
 
         self.bot.help_command = help_command
 

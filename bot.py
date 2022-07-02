@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from typing import Optional
 
 import aiohttp
 import discord
@@ -35,7 +36,7 @@ def cythonize():
 class BookShelf(commands.Bot):
     __version__ = '1.0.0a'
 
-    initial_extensions = (
+    initial_extensions = [
         'cogs.share',
         'cogs.dbooks',
         'cogs.democracy',
@@ -44,16 +45,19 @@ class BookShelf(commands.Bot):
         'cogs.info',
         'cogs.help',
         'cogs.customcommands'
-    )
+    ]
     test_guild = discord.Object(id=878431847162466354)
 
-    def __init__(self):
+    def __init__(self, nasa_api_key: Optional[str] = None):
         intents = discord.Intents.default()
         intents.message_content = True
-
         super().__init__('bk ', intents=intents)
 
         self.session: aiohttp.ClientSession = MISSING
+
+        self.nasa_api_key = nasa_api_key
+        if self.nasa_api_key:
+            self.initial_extensions.append('cogs.nasa')
 
     async def setup_hook(self) -> None:
         self.session = aiohttp.ClientSession()

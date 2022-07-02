@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import io
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, TypeVar
 
 import discord
 from discord import app_commands
@@ -12,6 +12,17 @@ from fuzzywuzzy import fuzz  # type: ignore
 from .eval import AstevalEval, code_block_converter
 from .pep import PEPs
 from .views import CodeModal
+
+# Cython faster
+try:
+    from cython.speed import get_max  # type: ignore
+except ImportError:
+    K = TypeVar('K')
+    V = TypeVar('V')
+
+
+    def get_max(population: dict[K, V]) -> K:
+        return max(population, key=population.get)  # type: ignore
 
 if TYPE_CHECKING:
     from bot import BookShelf
@@ -23,9 +34,8 @@ class Python(AstevalEval, PEPs, commands.Cog):
     zen: ClassVar[str] = ''
 
     def __init__(self, bot: BookShelf):
-        self.bot = bot
-
         super().__init__()
+        self.bot = bot
 
     @classmethod
     def get_zen(cls) -> str:
@@ -91,15 +101,15 @@ class Python(AstevalEval, PEPs, commands.Cog):
     @hybrid_pep.autocomplete('pep')
     async def pep_pep_autocomplete(self, interaction: discord.Interaction, current: str):
         current = current.lower()
+        highest: dict[app_commands.Choice[str], int] = {}
         names: list[app_commands.Choice[str]] = []
         for name, key in self.all_names.items():
             name = name.lower()
+            highest[app_commands.Choice(name=name, value=key)] = fuzz.token_sort_ratio(current, name)
 
-            if fuzz.token_sort_ratio(current, name) > 65 or current in name:
-                names.append(
-                    app_commands.Choice(
-                        name=name,
-                        value=key
-                    )
-                )
+        for _ in range(10):
+            option = get_max(highest)
+            names.append(option)
+            del highest[option]
+
         return names

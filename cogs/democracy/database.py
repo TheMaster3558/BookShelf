@@ -25,6 +25,7 @@ class DemocracyDatabase:
             );
             '''
         )
+        await self.db.commit()
 
     async def cog_unload(self) -> None:
         await self.db.close()
@@ -50,6 +51,8 @@ class DemocracyDatabase:
             )
         except aiosqlite.IntegrityError:
             return 'There is already an election running in this server.'
+        else:
+            await self.db.commit()
         return 'Election successfully created!'
 
     async def user_vote(self, member: discord.Member,

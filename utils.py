@@ -22,11 +22,13 @@ class InteractionCreator(discord.ui.View):
 
 
 class AuthoredView(discord.ui.View):
-    def __init__(self, author: discord.abc.Snowflake, *, timeout: Optional[float] = 180):
+    def __init__(self, author: discord.abc.Snowflake | None, *, timeout: Optional[float] = 180):
         self.author = author
         super().__init__(timeout=timeout)
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if not self.author:
+            return True
         if interaction.user == self.author:
             return True
         await interaction.response.send_message('This is not for you', ephemeral=True)
@@ -38,7 +40,11 @@ class VirtualContext:
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    async def send(self, *args, **kwargs):
+    async def send(self, *args, **kwargs) -> discord.Message | None:
+        if hasattr(self, 'channel'):
+            return await self.channel.send(*args, **kwargs)
+
+    async def typing(self, *args, **kwargs) -> None:
         pass
 
 

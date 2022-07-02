@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 class Info(EmbedBuilder, commands.Cog):
     """Get info about roles, members, etc."""
     def __init__(self, bot: BookShelf):
-        super().__init__()
         self.bot = bot
+        super().__init__()
 
     @commands.hybrid_command(
         name='userinfo',

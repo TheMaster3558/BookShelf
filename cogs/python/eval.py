@@ -18,10 +18,6 @@ class CodeblockConverter(commands.Converter):
 code_block_converter = commands.parameter(converter=CodeblockConverter, displayed_default='<code_block>')
 
 
-StdOut: TypeAlias = 'StringIO'
-StdErr: TypeAlias = 'StringIO'
-
-
 class AstevalEval:
     def __init__(self):
         self.interpreters: dict[int, asteval.Interpreter] = {}

@@ -36,7 +36,6 @@ class Share(ShareDatabase, commands.Cog):
     def __init__(self, bot: BookShelf):
         self.bot = bot
         self.read_count: dict[discord.User, int] = {}
-
         super().__init__()
 
     @commands.command(

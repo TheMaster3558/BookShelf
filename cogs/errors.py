@@ -18,6 +18,7 @@ class ErrorHandler(commands.Cog):
 
     def __init__(self, bot: BookShelf):
         self.bot = bot
+        super().__init__()
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error: Exception):
