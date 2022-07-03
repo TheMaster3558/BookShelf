@@ -60,6 +60,14 @@ class Backup(commands.Cog):
 
         return backup_data
 
+    @commands.command(
+        name='backup',
+        description='Backup our databases onto the web.'
+    )
+    @commands.is_owner()
+    async def message_backup(self, ctx: commands.Context):
+        await self.backup()
+
 
 async def setup(bot: BookShelf):
     await bot.add_cog(Backup(bot))

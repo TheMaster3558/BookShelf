@@ -120,6 +120,13 @@ class HelpCommand(commands.HelpCommand):
 
     async def send_cog_help(self, cog: commands.Cog) -> None:
         embed = await self.get_cog_embed(cog)
+
+        if not len(embed.fields):
+            invoked_with = f'{self.context.prefix}{self.context.invoked_with}'
+            string = self.context.message.content[len(invoked_with)+1:]
+            await self.get_destination().send(self.command_not_found(string))
+            return
+
         await self.send(embed)
 
     def get_command_signature(self, command: commands.Command) -> str:
