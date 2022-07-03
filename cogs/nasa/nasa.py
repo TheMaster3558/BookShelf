@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import datetime
-from typing import TYPE_CHECKING, Optional
+import random
+from typing import TYPE_CHECKING, Literal, Optional
 
 import discord
 from discord import app_commands
@@ -68,6 +69,7 @@ class NASA(Database, NASAClient, commands.Cog):
         self.dates_done.append(date)
 
         for channel_tuple in await self.get_channels():
+            print(channel_tuple)
             channel_id = channel_tuple[0]
             try:
                 channel = self.bot.get_channel(channel_id) or await self.bot.fetch_channel(channel_id)
@@ -85,6 +87,7 @@ class NASA(Database, NASAClient, commands.Cog):
         name='apodchannel',
         description='Autopost the APOD in a channel.'
     )
+    @commands.has_permissions(administrator=True)
     async def hybrid_apodchannel(self, ctx: commands.Context):
         if ctx.invoked_subcommand is None:
             await ctx.send_help(ctx.command)
@@ -96,6 +99,7 @@ class NASA(Database, NASAClient, commands.Cog):
     @app_commands.describe(
         channel='The channel to set.'
     )
+    @commands.has_permissions(administrator=True)
     async def hybrid_set(self, ctx: commands.Context, channel: discord.TextChannel):
         await self.add_channel(channel)
         await ctx.send(f'Channel set to {channel.mention}.')
@@ -104,6 +108,7 @@ class NASA(Database, NASAClient, commands.Cog):
         name='remove',
         description='Remove the channel.'
     )
+    @commands.has_permissions(administrator=True)
     async def hybrid_remove(self, ctx: commands.Context):
         await self.delete_channel(ctx.guild)
         await ctx.send('There is not longer an APOD autopost channel.')
@@ -151,3 +156,22 @@ class NASA(Database, NASAClient, commands.Cog):
         view = ExplanationView(data['explanation'], ctx.author)
 
         await ctx.send(embed=embed, view=view)
+
+    @commands.hybrid_command(
+        name='mars',
+        description='Get pictures of mars rovers!'
+    )
+    @app_commands.describe(
+        rover='The rover to get images from.'
+    )
+    async def hybrid_mars(self, ctx: commands.Context,
+                          rover: Literal['curiosity', 'opportunity', 'spirit'] = None):
+        rover = rover or random.choice(('curiosity', 'opportunity', 'spirit'))
+        data = await self.mars(rover)
+        data = random.choice(data['photos'])
+
+        embed = discord.Embed(
+            title=f'{data["rover"]["name"]} {data["camera"]["full_name"]}'
+        )
+        embed.set_image(url=data['img_src'])
+        await ctx.send(embed=embed)

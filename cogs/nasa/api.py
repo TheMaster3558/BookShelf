@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar, TypeVar, Optional
+from typing import TYPE_CHECKING, ClassVar, Literal, TypeVar
 
 if TYPE_CHECKING:
     from bot import BookShelf
@@ -15,13 +15,9 @@ class NASAClient:
 
     BASE: ClassVar[str] = 'https://api.nasa.gov'
 
-    @property
-    def api_key(self) -> str:
-        return self.bot.nasa_api_key
-
     def cleanup_params(self, params: dict[KT, VT]) -> dict[KT, VT]:
         params = {k: v for k, v in params.items() if v is not None}
-        params['api_key'] = self.api_key
+        params['api_key'] = self.bot.nasa_api_key
         return params
 
     async def apod(self, date: str | None = None, count: str | int = None, thumbs: bool = True) -> dict:
@@ -31,6 +27,10 @@ class NASAClient:
             'thumbs': str(thumbs)
         })
         async with self.bot.session.get(f'{self.BASE}/planetary/apod', params=params) as resp:
-            if not resp.ok:
-                return {}
+            return await resp.json()
+
+    async def mars(self, rover: Literal["curiosity", "opportunity", "spirit"]) -> dict:
+        params = self.cleanup_params({'sol': 1000})
+        async with self.bot.session.get(f'{self.BASE}/mars-photos/api/v1/rovers/curiosity/photos',
+                                        params=params) as resp:
             return await resp.json()

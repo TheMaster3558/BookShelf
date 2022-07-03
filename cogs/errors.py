@@ -55,5 +55,5 @@ class ErrorHandler(commands.Cog):
             await ctx.send(str(error))
 
 
-async def setup(bot):
+async def setup(bot: BookShelf):
     await bot.add_cog(ErrorHandler(bot))

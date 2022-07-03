@@ -51,6 +51,7 @@ class Database:
             ''',
             (guild.id,)
         )
+        await self.db.commit()
 
     async def get_channels(self):
         async with self.db.execute(

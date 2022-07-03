@@ -44,8 +44,10 @@ class BookShelf(commands.Bot):
         'cogs.errors',
         'cogs.info',
         'cogs.help',
-        'cogs.customcommands'
+        'cogs.customcommands',
+        'cogs.backup'
     ]
+
     test_guild = discord.Object(id=878431847162466354)
 
     def __init__(self, nasa_api_key: Optional[str] = None):
@@ -74,7 +76,7 @@ class BookShelf(commands.Bot):
         print(f'Logged in as {self.user} | {self.user.id}')
         await self.tree.sync()
 
-    def run(self, token: str, reconnect: bool = True, log: bool = True) -> None:
+    def standard_run(self, token: str, reconnect: bool = True, log: bool = True) -> None:
         async def runner():
             if log:
                 setup_logging()

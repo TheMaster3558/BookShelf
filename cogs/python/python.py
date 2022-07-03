@@ -105,7 +105,9 @@ class Python(AstevalEval, PEPs, commands.Cog):
         names: list[app_commands.Choice[str]] = []
         for name, key in self.all_names.items():
             name = name.lower()
-            highest[app_commands.Choice(name=name, value=key)] = fuzz.token_sort_ratio(current, name)
+            highest[app_commands.Choice(
+                name=name.capitalize(), value=key
+            )] = fuzz.token_sort_ratio(current, name)
 
         for _ in range(10):
             option = get_max(highest)

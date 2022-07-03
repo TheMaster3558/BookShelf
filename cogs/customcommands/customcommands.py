@@ -127,6 +127,7 @@ class CustomCommands(CommandStorage, commands.Cog):
         name='create',
         description='Create a custom command.'
     )
+    @commands.has_permissions(administrator=True)
     async def message_create(self, ctx: commands.Context, name: str):
         check = lambda cctx: cctx.channel == ctx.channel and cctx.author == ctx.author
 
@@ -152,6 +153,7 @@ class CustomCommands(CommandStorage, commands.Cog):
         name='delete',
         description='Delete a custom command.'
     )
+    @commands.has_permissions(administrator=True)
     async def message_delete(self, ctx: commands.Context, name: str):
         for command in self.commands_to_store:
             if command.name == name and command.ctx.guild.id == ctx.guild.id:
