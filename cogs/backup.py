@@ -34,13 +34,17 @@ class Backup(commands.Cog):
 
     # actually fetching the backup data will be made if we ever need it
 
-    async def backup(self):
+    async def backup(self) -> list[str]:
         data = await self.get_data()
 
+        successes: list[str] = []
         for kwargs in data:
             async with self.bot.session.post(f'{self.URL}/backup', **kwargs) as resp:
                 if not resp.ok:
-                    break
+                    continue
+                successes.append(kwargs['params']['filename'])  # type: ignore
+
+        return successes
 
     async def get_data(self) -> list[dict[str, str | bytes]]:
         backup_data = []
@@ -66,7 +70,9 @@ class Backup(commands.Cog):
     )
     @commands.is_owner()
     async def message_backup(self, ctx: commands.Context):
-        await self.backup()
+        await ctx.send('Backing up data...')
+        successes = await self.backup()
+        await ctx.send(f'The following have been backed up {", ".join(successes)}')
 
 
 async def setup(bot: BookShelf):

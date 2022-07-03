@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import functools
 import io
 from typing import TYPE_CHECKING, ClassVar, TypeVar
 
@@ -36,6 +37,9 @@ class Python(AstevalEval, PEPs, commands.Cog):
     def __init__(self, bot: BookShelf):
         super().__init__()
         self.bot = bot
+
+    async def cog_unload(self):
+        self.pep_pep_autocomplete.cache_clear()
 
     @classmethod
     def get_zen(cls) -> str:
@@ -98,6 +102,7 @@ class Python(AstevalEval, PEPs, commands.Cog):
         embed = self.get_pep(pep)
         await ctx.send(embed=embed)
 
+    @functools.cache
     @hybrid_pep.autocomplete('pep')
     async def pep_pep_autocomplete(self, interaction: discord.Interaction, current: str):
         current = current.lower()
