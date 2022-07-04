@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 # Cython faster
 try:
     from cython_bk.speed import get_max  # type: ignore
-except ImportError as e:
+except ImportError:
     KT = TypeVar('KT')
     VT = TypeVar('VT')
 
