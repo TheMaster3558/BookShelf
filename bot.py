@@ -31,11 +31,18 @@ def setup_logging(formatter: logging.Formatter):
 
 def cythonize():
     import os
-    from Cython.Build import cythonize  # type: ignore
+    from setuptools import setup
+    from Cython.Build import cythonize as cc  # type: ignore
 
-    for file in os.listdir('./cython/'):
+    for file in os.listdir('cython_bk/'):
         if file.endswith('.pyx'):
-            cythonize(file)
+            setup(
+                ext_modules=cc(f'./cython_bk/{file}')
+            )
+
+
+if __name__ == '__main__':
+    cythonize()
 
 
 class BookShelf(commands.Bot):
@@ -81,7 +88,7 @@ class BookShelf(commands.Bot):
 
     async def on_ready(self):
         print(f'Logged in as {self.user} | {self.user.id}')
-        await self.tree.sync()
+        await self.tree.sync(guild=self.test_guild)
 
     def standard_run(self, token: str, reconnect: bool = True, log: bool = True) -> None:
         async def runner():

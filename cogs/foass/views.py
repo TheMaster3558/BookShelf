@@ -1,11 +1,16 @@
+from __future__ import annotations
+
 import inspect
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
 
 import discord
 from discord.ext import commands
 import foaap
 
 from utils import AuthoredView, AlmostInteractionContext
+
+if TYPE_CHECKING:
+    from .foass import MiniArgs
 
 
 MISSING = discord.utils.MISSING
@@ -51,12 +56,22 @@ class FOASSView(AuthoredView):
             modal = FOASSModal(self.method, self)
             await interaction.response.send_modal(modal)
             await modal.wait()
-        await interaction.delete_original_message()
+
+        try:
+            await interaction.delete_original_message()
+        except discord.NotFound:
+            for child in self.children:
+                try:
+                    child.disabled = True
+                except AttributeError:
+                    pass
+            await interaction.edit_original_message(view=self)
+
         self.stop()
 
 
 class FOASSModal(discord.ui.Modal):
-    def __init__(self, method: Callable[..., str], view: FOASSView):
+    def __init__(self, method: Callable[..., str], view: FOASSView | MiniArgs):
         self.view = view
 
         self.method = method

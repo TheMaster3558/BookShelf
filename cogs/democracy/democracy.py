@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, Optional, overload
 from sqlite3 import OperationalError
 
 import discord
@@ -16,14 +16,23 @@ if TYPE_CHECKING:
 
 # Cython faster
 try:
-    from cython.speed import get_max  # type: ignore
+    from cython_bk.speed import get_max  # type: ignore
 except ImportError:
-    K = TypeVar('K')
-    V = TypeVar('V')
+    KT = TypeVar('KT')
+    VT = TypeVar('VT')
 
+    @overload
+    def get_max(population: dict[KT, VT], greater_than: None) -> KT:
+        ...
 
-    def get_max(population: dict[K, V]) -> K:
-        return max(population, key=population.get)  # type: ignore
+    @overload
+    def get_max(population: dict[KT, VT], greater_than: Optional[Any]) -> Optional[KT]:
+        ...
+
+    def get_max(population: dict[KT, VT], greater_than: Optional[Any] = None) -> Optional[KT]:
+        highest = max(population, key=population.get)  # type: ignore
+        if not greater_than or population[highest] > greater_than:
+            return highest
 
 
 class Democracy(DemocracyDatabase, commands.Cog):
