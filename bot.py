@@ -10,18 +10,23 @@ from discord.ext import commands
 MISSING = discord.utils.MISSING
 
 
-def setup_logging():
-    logger = logging.getLogger('discord')
-    logger.setLevel(logging.DEBUG)
+def setup_logging(formatter: logging.Formatter):
+    discord_logger = logging.getLogger('discord')
+    discord_logger.setLevel(logging.DEBUG)
     handler = logging.FileHandler(filename='logs/discord.log', encoding='utf-8', mode='w')
-    handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-    logger.addHandler(handler)
+    handler.setFormatter(formatter)
+    discord_logger.addHandler(handler)
 
-    logger = logging.getLogger('asyncio')
-    logger.setLevel(logging.DEBUG)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    console_handler.setFormatter(formatter)
+    discord_logger.addHandler(console_handler)
+
+    asyncio_logger = logging.getLogger('asyncio')
+    asyncio_logger.setLevel(logging.DEBUG)
     handler = logging.FileHandler(filename='logs/asyncio.log', encoding='utf-8', mode='w')
-    handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-    logger.addHandler(handler)
+    handler.setFormatter(formatter)
+    asyncio_logger.addHandler(handler)
 
 
 def cythonize():
@@ -34,7 +39,7 @@ def cythonize():
 
 
 class BookShelf(commands.Bot):
-    __version__ = '1.0.0a'
+    logging_formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s')
 
     initial_extensions = [
         'cogs.share',
@@ -46,7 +51,8 @@ class BookShelf(commands.Bot):
         'cogs.help',
         'cogs.customcommands',
         'cogs.backup',
-        'cogs.advice'
+        'cogs.advice',
+        'cogs.foass'
     ]
 
     test_guild = discord.Object(id=878431847162466354)
@@ -80,7 +86,7 @@ class BookShelf(commands.Bot):
     def standard_run(self, token: str, reconnect: bool = True, log: bool = True) -> None:
         async def runner():
             if log:
-                setup_logging()
+                setup_logging(self.logging_formatter)
 
             async with self:
                 await self.start(token, reconnect=reconnect)

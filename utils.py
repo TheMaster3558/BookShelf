@@ -53,3 +53,9 @@ async def split_embeds(embeds: list[discord.Embed], channel: discord.abc.Message
 
     for embeds in embeds_list:
         await channel.send(embeds=embeds)
+
+
+class AlmostInteractionContext:
+    def __init__(self, interaction: discord.Interaction):
+        self.bot = interaction.client
+        self.guild = interaction.guild
