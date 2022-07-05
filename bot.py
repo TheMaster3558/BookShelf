@@ -88,7 +88,7 @@ class BookShelf(commands.Bot):
 
     async def on_ready(self):
         print(f'Logged in as {self.user} | {self.user.id}')
-        await self.tree.sync(guild=self.test_guild)
+        await self.tree.sync()
 
     def standard_run(self, token: str, reconnect: bool = True, log: bool = True) -> None:
         async def runner():

@@ -68,7 +68,6 @@ class FOASS(commands.Cog):
     @app_commands.rename(
         _type='type'
     )
-    @app_commands.guilds(878431847162466354)
     async def app_foass(self, interaction: discord.Interaction, _type: str):
         method = getattr(foaap, _type, None)
         if not method:
