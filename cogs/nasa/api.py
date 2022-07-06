@@ -31,6 +31,6 @@ class NASAClient:
 
     async def mars(self, rover: Literal["curiosity", "opportunity", "spirit"]) -> dict:
         params = self.cleanup_params({'sol': 1000})
-        async with self.bot.session.get(f'{self.BASE}/mars-photos/api/v1/rovers/curiosity/photos',
+        async with self.bot.session.get(f'{self.BASE}/mars-photos/api/v1/rovers/{rover}/photos',
                                         params=params) as resp:
             return await resp.json()
