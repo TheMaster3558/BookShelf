@@ -31,6 +31,9 @@ class FOASS(commands.Cog):
         self.bot = bot
         super().__init__()
 
+    async def cog_unload(self) -> None:
+        self.foass_type_autocomplete.cache_clear()
+
     @commands.command(
         name='foass',
         description='Say some colorful things to your friends!'
