@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from math import ceil
-from typing import Optional
+from typing import Any, Optional, overload, TypeVar
 
 import discord
 import numpy
-
 
 MISSING = discord.utils.MISSING
 
@@ -59,3 +58,23 @@ class AlmostInteractionContext:
     def __init__(self, interaction: discord.Interaction):
         self.bot = interaction.client
         self.guild = interaction.guild
+
+
+KT = TypeVar('KT')
+VT = TypeVar('VT')
+
+
+@overload
+def get_max(population: dict[KT, VT], greater_than: None = None) -> KT:
+    ...
+
+
+@overload
+def get_max(population: dict[KT, VT], greater_than: Any) -> Optional[KT]:
+    ...
+
+
+def get_max(population: dict[KT, VT], greater_than: Optional[Any] = None) -> Optional[KT]:
+    highest = max(population, key=population.get)  # type: ignore
+    if not greater_than or population[highest] > greater_than:
+        return highest

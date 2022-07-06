@@ -29,22 +29,6 @@ def setup_logging(formatter: logging.Formatter):
     asyncio_logger.addHandler(handler)
 
 
-def cythonize():
-    import os
-    from setuptools import setup
-    from Cython.Build import cythonize as cc  # type: ignore
-
-    for file in os.listdir('cython_bk/'):
-        if file.endswith('.pyx'):
-            setup(
-                ext_modules=cc(f'./cython_bk/{file}')
-            )
-
-
-if __name__ == '__main__':
-    cythonize()
-
-
 class BookShelf(commands.Bot):
     logging_formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s')
 
