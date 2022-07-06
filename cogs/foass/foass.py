@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import functools
+import inspect
 from typing import TYPE_CHECKING, Any, Callable, TypeVar, overload, Optional
 
 import foaap
@@ -77,12 +78,16 @@ class FOASS(commands.Cog):
             return
 
         args = MiniArgs()
-        modal = FOASSModal(method, args)
-        await interaction.response.send_modal(modal)
-        await modal.wait()
+
+        if len(inspect.signature(method).parameters) > 1:
+            modal = FOASSModal(method, args)
+            await interaction.response.send_modal(modal)
+            await modal.wait()
 
         ctx = await commands.Context.from_interaction(interaction)
         message = call_with_author(ctx, method, *args.args)
+
+        await interaction.response.send_message('Done!', ephemeral=True)
         await interaction.channel.send(message)
 
     @functools.cache
@@ -108,4 +113,5 @@ class FOASS(commands.Cog):
                 names.append(option)
                 del highest[option]
 
+        names.sort(key=lambda v: v.name)
         return names
