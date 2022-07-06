@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Optional, Sequence
 
 import discord
 from discord.ext import commands
+from requests.structures import CaseInsensitiveDict
 
 from utils import split_embeds
 from cogs.customcommands import CustomCommand  # type: ignore
@@ -160,6 +161,24 @@ class Help(commands.Cog):
         help_command._command_impl.explanation = f'The help command for {self.bot.user.name}.'
 
         self.bot.help_command = help_command
+
+    @commands.command(
+        name='category',
+        description='Get help on a just a category!',
+        aliases=['cog']
+    )
+    async def message_category(self, ctx: commands.Context, category: str):
+        cog = CaseInsensitiveDict(self.bot.cogs).get(category)
+
+        if not cog:
+            embed = discord.Embed(
+                title='Category Not Found',
+                description=f'{", ".join(self.bot.cogs)} are the categories.'
+            )
+            embed.set_footer(text='Some categories may not have commands.')
+            await ctx.send(embed=embed)
+
+        await ctx.send_help(cog)
 
 
 async def setup(bot: BookShelf):
