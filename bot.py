@@ -37,13 +37,14 @@ class BookShelf(commands.Bot):
         'cogs.dbooks',
         'cogs.democracy',
         'cogs.python',
-        'cogs.errors',
+        'cogs.private.errors',
         'cogs.info',
-        'cogs.help',
+        'cogs.private.help',
         'cogs.customcommands',
-        'cogs.backup',
+        'cogs.private.backup',
         'cogs.advice',
-        'cogs.foass'
+        'cogs.foass',
+        'cogs.private.tree_sync'
     ]
 
     test_guild = discord.Object(id=878431847162466354)
@@ -72,7 +73,6 @@ class BookShelf(commands.Bot):
 
     async def on_ready(self):
         print(f'Logged in as {self.user} | {self.user.id}')
-        await self.tree.sync()
 
     def standard_run(self, token: str, reconnect: bool = True, log: bool = True) -> None:
         async def runner():
