@@ -1,5 +1,3 @@
-from typing import Union
-
 import aiosqlite
 import discord
 
@@ -17,7 +15,7 @@ class ShareDatabase:
     async def cog_unload(self) -> None:
         await self.db.close()
 
-    async def process_write(self, user: Union[discord.Member, discord.User], name: str, text: str) -> str:
+    async def process_write(self, user: discord.Member | discord.User, name: str, text: str) -> str:
         await self.db.execute(
             f'''
             CREATE TABLE IF NOT EXISTS "{user.id}" (
@@ -39,7 +37,7 @@ class ShareDatabase:
             return f'You already have a story named "{name}"'
         return f'Your writing has been saved!'
 
-    async def fetch_writes(self, user: Union[discord.Member, discord.User]):
+    async def fetch_writes(self, user: discord.Member | discord.User):
         async with self.db.execute(
                 f'''
             SELECT * FROM "{user.id}"
