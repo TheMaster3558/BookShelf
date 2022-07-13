@@ -62,8 +62,7 @@ class CommandStorage:
 
             mutable_args = list(new_args)
             converted_args = await run_converters(cctx, args.copy(), mutable_args)
-
-            format_kwargs = {arg.name: converted_args[index] for index, arg in enumerate(args)}
+            format_kwargs = {arg.name: converted_arg for arg, converted_arg in zip(args, converted_args)}
             to_send = output.format(**format_kwargs)
             await cctx.send(to_send)
 
