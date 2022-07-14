@@ -85,7 +85,7 @@ class Python(AstevalEval, PEPs, commands.Cog):
         description='Python Enhancement Proposals.'
     )
     @app_commands.describe(
-        pep='The PEP number'
+        pep='The PEP number.'
     )
     async def hybrid_pep(self, ctx: commands.Context,
                          pep: str):

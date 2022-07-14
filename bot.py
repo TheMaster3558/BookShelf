@@ -41,7 +41,8 @@ class BookShelf(commands.Bot):
         'cogs.customcommands',
         'cogs.advice',
         'cogs.foass',
-        'cogs.private'
+        'cogs.private',
+        'jishaku'
     ]
 
     test_guild = discord.Object(id=878431847162466354)
@@ -49,6 +50,7 @@ class BookShelf(commands.Bot):
     def __init__(self, nasa_api_key: Optional[str] = None):
         intents = discord.Intents.default()
         intents.message_content = True
+        intents.members = True
         super().__init__('bk ', intents=intents)
 
         self.session: aiohttp.ClientSession = MISSING
@@ -56,6 +58,8 @@ class BookShelf(commands.Bot):
         self.nasa_api_key = nasa_api_key
         if self.nasa_api_key:
             self.initial_extensions.append('cogs.nasa')
+        if self.intents.members:
+            self.initial_extensions.append('cogs.anniversary')
 
     async def setup_hook(self) -> None:
         self.session = aiohttp.ClientSession()

@@ -25,7 +25,7 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help(ctx.command)
 
-        elif isinstance(error, self.secret_perms):
+        elif isinstance(error, (*self.secret_perms, commands.TooManyArguments)):
             return
 
         elif isinstance(error, commands.NoPrivateMessage):

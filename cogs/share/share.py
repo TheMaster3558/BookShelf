@@ -55,7 +55,7 @@ class Share(ShareDatabase, commands.Cog):
         description='Read a story from a member!'
     )
     @app_commands.describe(
-        author='The user to read stories from'
+        author='The user to read stories from.'
     )
     async def hybrid_read(self, ctx: commands.Context, author: discord.User):
         try:

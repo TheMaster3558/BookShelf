@@ -59,8 +59,8 @@ class Democracy(DemocracyDatabase, commands.Cog):
         description='Create an election!'
     )
     @app_commands.describe(
-        expiry='The days to end the election automatically in',
-        channel='The channel to send the election results in'
+        expiry='The days to end the election automatically in.',
+        channel='The channel to send the election results in.'
     )
     @commands.has_permissions(administrator=True)
     async def hybrid_create(self, ctx: commands.Context,
@@ -79,7 +79,7 @@ class Democracy(DemocracyDatabase, commands.Cog):
         description='Vote for someone in an election!'
     )
     @app_commands.describe(
-        member='The member to vote for'
+        member='The member to vote for.'
     )
     @commands.guild_only()
     async def hybrid_vote(self, ctx: commands.Context, member: discord.Member):
