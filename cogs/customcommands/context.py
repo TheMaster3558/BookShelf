@@ -10,9 +10,7 @@ class CustomCommandContext:
         self.channel = Channel(ctx.channel, True)
         self.guild = Guild(ctx.guild, True)
         self.server = self.guild
-
-        invoked_with_len = len(f'{ctx.prefix}{ctx.invoked_with}')
-        self.message = ctx.message.content[invoked_with_len+1:]
+        self.message = ctx.message.content.lstrip(f'{ctx.message.content}{ctx.invoked_with}')
 
 
 class Base:
@@ -34,6 +32,9 @@ class Author(Base):
         self.id = member.id
         self.__rn = reference_name
 
+    def __str__(self):
+        return f'{self.name}#{self.discriminator}'
+
     def __repr__(self):
         return f'{self._prefix}{self.__rn}.name = {self.name}\n' \
                f'{self._prefix}{self.__rn}.discriminator = {self.discriminator}\n' \
@@ -47,6 +48,9 @@ class Channel(Base):
         self.name = channel.name
         self.mention = channel.mention
 
+    def __str__(self):
+        return self.mention
+
     def __repr__(self):
         return f'{self._prefix}channel.name = {self.name}\n{self._prefix}channel.mention = {self.mention}'
 
@@ -55,6 +59,9 @@ class Guild(Base):
     def __init__(self, guild: discord.Guild, context: bool = False):
         super().__init__(context)
         self.name = guild.name
+
+    def __str__(self):
+        return self.name
 
     def __repr__(self):
         return f'{self._prefix}guild.name = {self.name}'

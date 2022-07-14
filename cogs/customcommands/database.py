@@ -27,14 +27,12 @@ async def run_converters(ctx: commands.Context, args: list[Argument], new_args: 
                 raise ValueError()
 
             default = arg.default
-
             if default.startswith('ctx.'):
                 default = getattr(limited_ctx, default[4:], 'None')
 
             new_args.append(default)
 
             continue
-
         if arg.annotation is not None:
             new_args[index] = await arg.annotation().convert(ctx, new_args[index])
     return new_args

@@ -40,10 +40,14 @@ class TreeSync(commands.Cog):
     async def check_if_should_sync(self) -> bool:
         return self.app_commands_to_list() != await self.get_app_commands()
 
-    async def cog_load(self) -> None:
+    async def sync(self):
+        await self.bot.wait_until_ready()
         if await self.check_if_should_sync():
             await self.bot.tree.sync()
             await self.write_app_commands()
+
+    async def cog_load(self) -> None:
+        self.bot.loop.create_task(self.sync())
 
     @commands.command(
         name='sync',
