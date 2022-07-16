@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 import sys
 import traceback
 from typing import TYPE_CHECKING, Type
@@ -39,12 +40,25 @@ class ErrorHandler(commands.Cog):
             await self.bad_argument_handler(ctx, error)
 
         else:
-            traceback.print_exception(
-                type(error),
-                error,
-                error.__traceback__,
-                file=sys.stderr
-            )
+            if await self.bot.is_owner(ctx.author):
+                temp = io.StringIO()
+
+                traceback.print_exception(
+                    type(error),
+                    error,
+                    error.__traceback__,
+                    file=temp
+                )
+                tb = temp.getvalue()
+                await ctx.send(f'```py\n{tb}\n```')
+
+            else:
+                traceback.print_exception(
+                    type(error),
+                    error,
+                    error.__traceback__,
+                    file=sys.stderr
+                )
 
     async def bad_argument_handler(self, ctx: commands.Context, error: commands.BadArgument):
         if isinstance(error, (commands.MemberNotFound, commands.UserNotFound)):

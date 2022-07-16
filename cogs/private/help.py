@@ -47,7 +47,7 @@ class HelpCommand(commands.HelpCommand):
     def get_command_embed(self, command: commands.Command) -> discord.Embed:
         embed = discord.Embed(
             title=command.qualified_name,
-            description=command.description
+            description=command.description or command.callback.__doc__ or 'No description'
         )
         embed.add_field(
             name='Usage',
@@ -78,9 +78,8 @@ class HelpCommand(commands.HelpCommand):
         for command in group.walk_commands():
             embed.add_field(
                 name=f'`{self.get_command_signature(command)}`',
-                value=command.description
+                value=command.description or command.callback.__doc__ or 'No description'
             )
-
         return embed
 
     async def send_group_help(self, group: commands.Group) -> None:

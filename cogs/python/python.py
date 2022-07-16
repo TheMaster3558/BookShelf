@@ -41,6 +41,7 @@ class Python(AstevalEval, PEPs, commands.Cog):
             import this
 
         cls.zen = temp.getvalue()
+        temp.close()
         return cls.get_zen()
 
     @commands.hybrid_command(
