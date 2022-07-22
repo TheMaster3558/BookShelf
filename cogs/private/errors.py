@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import contextlib
 import io
 import sys
 import traceback
 from typing import TYPE_CHECKING, Type
 
+import discord
 from discord.ext import commands
 
 if TYPE_CHECKING:
@@ -50,7 +52,17 @@ class ErrorHandler(commands.Cog):
                     file=temp
                 )
                 tb = temp.getvalue()
-                await ctx.send(f'```py\n{tb}\n```')
+
+                try:
+                    await ctx.send(f'```py\n{tb}\n```')
+                except discord.HTTPException:
+                    await ctx.send('Something went wrong. Check the console for more.')
+                    traceback.print_exception(
+                        type(error),
+                        error,
+                        error.__traceback__,
+                        file=sys.stderr
+                    )
 
             else:
                 traceback.print_exception(

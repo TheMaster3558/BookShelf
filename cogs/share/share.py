@@ -32,7 +32,7 @@ class Share(ShareDatabase, commands.Cog):
         description='Write a story to share!'
     )
     async def message_write(self, ctx: commands.Context):
-        creator = InteractionCreator(timeout=None)
+        creator = InteractionCreator(author=ctx.author, timeout=None)
         await ctx.send(view=creator)
         await creator.wait()
 

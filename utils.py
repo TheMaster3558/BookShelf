@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 from math import ceil
 from typing import Any, Optional, overload, TypeVar
 
@@ -7,17 +8,6 @@ import discord
 import numpy
 
 MISSING = discord.utils.MISSING
-
-
-class InteractionCreator(discord.ui.View):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.interaction: discord.Interaction = MISSING
-
-    @discord.ui.button(label='Click to start!', style=discord.ButtonStyle.green)
-    async def creator(self, interaction: discord.Interaction, button: discord.ui.Button):
-        self.interaction = interaction
-        self.stop()
 
 
 class AuthoredView(discord.ui.View):
@@ -32,6 +22,22 @@ class AuthoredView(discord.ui.View):
             return True
         await interaction.response.send_message('This is not for you', ephemeral=True)
         return False
+
+
+class InteractionCreator(AuthoredView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.interaction: discord.Interaction = MISSING
+
+    @discord.ui.button(label='Click to start!', style=discord.ButtonStyle.green)
+    async def creator(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.interaction = interaction
+
+        with contextlib.suppress(discord.HTTPException):
+            self.creator.disabled = True
+            await interaction.message.edit(view=self)
+
+        self.stop()
 
 
 class VirtualContext:

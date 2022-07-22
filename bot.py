@@ -42,7 +42,8 @@ class BookShelf(commands.Bot):
         'cogs.advice',
         'cogs.foass',
         'cogs.private',
-        'jishaku'
+        'jishaku',
+        'cogs.timestamps'
     ]
 
     test_guild = discord.Object(id=878431847162466354)
