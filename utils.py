@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+import asyncio
 import contextlib
 from math import ceil
-from typing import Any, Optional, overload, TypeVar
+from typing import Any, Iterable, Generator, Optional, overload, Sequence, TypeVar
 
 import discord
 import numpy
+
+
+T = TypeVar('T')
+
 
 MISSING = discord.utils.MISSING
 
@@ -84,3 +89,19 @@ def get_max(population: dict[KT, VT], greater_than: Optional[Any] = None) -> Opt
     highest = max(population, key=population.get)  # type: ignore
     if not greater_than or population[highest] > greater_than:
         return highest
+
+
+async def async_yielder(iterable: Sequence[T], *, count: int, delay: float) -> Generator[Iterable[T], Any, Any]:
+    temp: list[T] = []
+    counter = 0
+    for item in iterable:
+        counter += 1
+        temp.append(item)
+
+        if counter >= count:
+            yield temp
+            temp.clear()
+            counter = 0
+
+    if temp:
+        yield temp

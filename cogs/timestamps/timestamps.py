@@ -45,6 +45,7 @@ class Timestamps(commands.Cog):
 
     def __init__(self, bot: BookShelf):
         self.bot = bot
+        super().__init__()
 
     @commands.command(
         name='timestamp',
