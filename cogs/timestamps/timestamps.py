@@ -14,6 +14,9 @@ if TYPE_CHECKING:
     from bot import BookShelf
 
 
+MISSING = discord.utils.MISSING
+
+
 class Timestamps(commands.Cog):
     conversions = {
         'January': 1,
@@ -85,6 +88,9 @@ class Timestamps(commands.Cog):
             modal = TimestampModal(interaction.user)
             await interaction.response.send_modal(modal)
             await modal.wait()
+
+            if modal.dt is MISSING:
+                return
 
             try:
                 dt = discord.utils.format_dt(modal.dt, style=modal.style)  # type: ignore

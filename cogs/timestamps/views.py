@@ -60,10 +60,12 @@ class TimestampModal(discord.ui.Modal, title='Timestamp Creator'):
     )
 
     @property
-    def month(self) -> discord.ui.Select:
+    def month(self) -> str:
         for child in self.children:
             if isinstance(child, discord.ui.Select) and child.placeholder == 'Month':
-                return child
+                return child.values[0]
+            elif isinstance(child, discord.ui.TextInput) and child.label == 'Month':
+                return child.value
 
     @property
     def year(self) -> discord.ui.TextInput:
@@ -89,7 +91,7 @@ class TimestampModal(discord.ui.Modal, title='Timestamp Creator'):
         m_value = self.minutes.value
         h_value = self.hours.value
         d_value = self.days.value
-        mo_value = self.month.values[0]
+        mo_value = self.month
         y_value = self.year.value
 
         while len(m_value) < 2:
@@ -103,7 +105,12 @@ class TimestampModal(discord.ui.Modal, title='Timestamp Creator'):
 
         format_text = f'{m_value} {h_value} {d_value} ' \
                       f'{mo_value} {y_value}'
-        self.dt = datetime.strptime(format_text, self.datetime_format)
+
+        try:
+            self.dt = datetime.strptime(format_text, self.datetime_format)
+        except ValueError:
+            await interaction.response.send_message('A part of the timestamp was invalid.', ephemeral=True)
+            return
 
         if not isinstance(self.author, discord.Member) or not self.author.is_on_mobile():
             modal = StyleModal(self)
