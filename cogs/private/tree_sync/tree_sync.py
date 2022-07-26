@@ -62,3 +62,5 @@ class TreeSync(commands.Cog):
                 await self.bot.tree.sync()
         except discord.HTTPException as exc:
             await ctx.send(f'There was an error while syncing. \n```\n{exc}\n```')
+        else:
+            await ctx.send('Successfully synced.')
