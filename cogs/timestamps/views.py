@@ -2,8 +2,6 @@ from datetime import datetime
 
 import discord
 
-from utils import InteractionCreator
-
 
 MISSING = discord.utils.MISSING
 
@@ -85,7 +83,7 @@ class TimestampModal(discord.ui.Modal, title='Timestamp Creator'):
         self.add_item(year)
 
         self.dt: datetime = MISSING
-        self.style: str = MISSING
+        self.interaction: discord.Interaction = MISSING
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
         m_value = self.minutes.value
@@ -112,18 +110,11 @@ class TimestampModal(discord.ui.Modal, title='Timestamp Creator'):
             await interaction.response.send_message('A part of the timestamp was invalid.', ephemeral=True)
             return
 
-        if not isinstance(self.author, discord.Member) or not self.author.is_on_mobile():
-            modal = StyleModal(self)
-            view = InteractionCreator(interaction.user)
-            await interaction.response.send_message('Now select a style!', view=view, ephemeral=True)
-            await view.wait()
-            await view.interaction.response.send_modal(modal)
-            await modal.wait()
-        else:
-            self.style = None
+        self.interaction = interaction
+        self.stop()
 
 
-class StyleModal(discord.ui.Modal, title='What style should it be?'):
+class StyleSelect(discord.ui.Select['StyleView']):
     names = (
         'Short Time',
         'Short Date',
@@ -135,17 +126,7 @@ class StyleModal(discord.ui.Modal, title='What style should it be?'):
 
     styles = ('t', 'd', 'D', 'f', 'F', 'R')
 
-    @property
-    def style(self) -> discord.ui.Select:
-        for child in self.children:
-            if isinstance(child, discord.ui.Select) and child.placeholder == 'Select a style':
-                return child
-
-    def __init__(self, modal: TimestampModal):
-        self.modal = modal
-        super().__init__()
-
-        dt = modal.dt
+    def __init__(self, dt: datetime):
         examples = [
             dt.strftime('%H:%M'),
             dt.strftime('%d/%m/%Y'),
@@ -195,15 +176,28 @@ class StyleModal(discord.ui.Modal, title='What style should it be?'):
 
         examples.append(relative)
 
-        style = discord.ui.Select(
-            placeholder='Select a style',
-            options=[
-                discord.SelectOption(label=name, description=example, value=style)
-                for name, example, style in zip(self.names, examples, self.styles)
-            ]
-        )
-        self.add_item(style)
+        options = [
+            discord.SelectOption(label=name, description=example, value=style)
+            for name, example, style in zip(self.names, examples, self.styles)
+        ]
 
-    async def on_submit(self, interaction: discord.Interaction) -> None:
-        self.modal.style = self.style.values[0]
-        await interaction.response.send_message('Here you go!')
+        super().__init__(
+            options=options,
+            placeholder='Select a style!'
+        )
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        self.disabled = True
+        await interaction.message.edit(view=self.view)
+
+        self.view.style = self.values[0]
+        self.view.stop()
+
+
+class StyleView(discord.ui.View):
+    def __init__(self, dt: datetime):
+        super().__init__(timeout=None)
+        self.add_item(StyleSelect(dt))
+
+        self.style: str = MISSING

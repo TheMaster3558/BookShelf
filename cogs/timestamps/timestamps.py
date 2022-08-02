@@ -7,7 +7,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from .views import TimestampModal
+from .views import StyleView, TimestampModal
 from utils import InteractionCreator
 
 if TYPE_CHECKING:
@@ -31,16 +31,6 @@ class Timestamps(commands.Cog):
         'October': 10,
         'November': 1,
         'December': 12
-    }
-
-    styles = {
-        'Short Time': 't',
-        'Long Time': 'T',
-        'Short Date': 'd',
-        'Long Date': 'D',
-        'Short Date Time': 'f',
-        'Long Date Time': 'F',
-        'Relative Time': 'R'
     }
 
     def __init__(self, bot: BookShelf):
@@ -69,7 +59,7 @@ class Timestamps(commands.Cog):
         day='The day in the timestamp.',
         month='The month in the timestamp.',
         year='The year in the timestamp.',
-        modal='Whether to send a modal. (Will not have seconds).'
+        modal='Whether to send a modal. (Will not have the seconds option).'
     )
     async def app_timestamp(
             self,
@@ -81,8 +71,6 @@ class Timestamps(commands.Cog):
             month: Literal['January', 'February', 'March', 'April', 'May', 'June',
                            'July', 'August', 'September', 'October', 'November', 'December'] = None,
             year: app_commands.Range[int, 1970, 9999] = None,
-            style: Literal['Short Time', 'Long Time', 'Short Date', 'Long Date',
-                           'Short Date Time', 'Long Date Time', 'Relative Time'] = None,
             modal: bool = False,
     ):
         if modal:
@@ -92,29 +80,27 @@ class Timestamps(commands.Cog):
 
             if modal.dt is MISSING:
                 return
+            dt = modal.dt
+        else:
+            if not all([second, minute, hour, day, month, year]):
+                await interaction.response.send_message(
+                    'You must provide all time arguments if not using modals.',
+                    ephemeral=True
+                )
 
-            try:
-                dt = discord.utils.format_dt(modal.dt, style=modal.style)  # type: ignore
-            except OSError:
-                await interaction.followup.send('The date is too far in the past to convert to a timestamp.')
-            else:
-                await interaction.channel.send(f'{dt} `{dt}`')
-            return
-
-        if not all([second, minute, hour, day, month, year]):
-            await interaction.response.send_message(
-                'You must provide all time arguments if not using modals.',
-                ephemeral=True
+            month = self.conversions[month]
+            dt = datetime(
+                year, month, day, hour, minute, second
             )
 
-        month = self.conversions[month]
-        style = self.styles[style]
-        dt_object = datetime(
-            year, month, day, hour, minute, second
-        )
-        try:
-            dt = discord.utils.format_dt(dt_object, style=style)
-        except OSError:
-            await interaction.followup.send('The date is too far in the past to convert to a timestamp.')
+        view = StyleView(dt)
+
+        if modal:
+            await modal.interaction.response.send_message(view=view)
         else:
-            await interaction.channel.send(f'{dt} `{dt}`')
+            await interaction.response.send_message(view=view)
+        await view.wait()
+
+        timestamp = discord.utils.format_dt(dt, view.style)  # type: ignore
+        await interaction.followup.send(timestamp)
+
