@@ -120,7 +120,7 @@ class Anniversary(AnniversaryDatabase, commands.Cog):
         age = math.ceil((next_anniversary - user.created_at).days / 365)
 
         embed = discord.Embed(
-            title=f'{discord.utils.format_dt(next_anniversary, style="R")}, {user} will reach '
+            title=f'{discord.utils.format_dt(next_anniversary, style="R")}, {user.mention} will reach '
                   f'their {self.number_to_word[age]} anniversary.',
             color=self.get_embed_color(user)
         )
