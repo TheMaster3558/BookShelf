@@ -113,7 +113,7 @@ class HelpCommand(commands.HelpCommand):
         for command in await self.get_runnable_commands(cog):
             embed.add_field(
                 name=f'`{self.get_command_signature(command)}`',
-                value=command.description
+                value=command.description or command.callback.__doc__ or 'No description'
             )
 
         return embed
@@ -157,14 +157,17 @@ class Help(commands.Cog):
     async def cog_load(self) -> None:
         help_command = HelpCommand()
         help_command.cog = self
-        help_command._command_impl.explanation = f'The help command for {self.bot.user.name}.'
-
+        help_command._command_impl.description = 'The help command for {}'
         self.bot.help_command = help_command
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        self.bot.help_command._command_impl.description.format(self.bot.user.name)
 
     @commands.command(
         name='category',
         description='Get help on a just a category!',
-        aliases=['cog']
+        aliases=['cog', 'cogs']
     )
     async def message_category(self, ctx: commands.Context, category: str):
         cog = CaseInsensitiveDict(self.bot.cogs).get(category)
@@ -178,6 +181,34 @@ class Help(commands.Cog):
             await ctx.send(embed=embed)
 
         await ctx.send_help(cog)
+
+    @commands.hybrid_command(
+        name='ping',
+        description='Pong!'
+    )
+    async def hybrid_ping(self, ctx: commands.Context):
+        embed = discord.Embed(
+            title='Pong!',
+            color=discord.Color.blurple()
+        )
+        embed.add_field(
+            name='Gateway Latency',
+            value=f'{(self.bot.latency * 1000):.0f} MS'
+        )
+        embed.add_field(
+            name='API Latency',
+            value='Pending...'
+        )
+
+        then = self.bot.loop.time()
+        msg = await ctx.send(embed=embed)
+
+        embed.remove_field(1)
+        embed.add_field(
+            name='HTTP Latency',
+            value=f'{((self.bot.loop.time() - then) * 1000):.0f} MS'
+        )
+        await msg.edit(embed=embed)
 
 
 async def setup(bot: BookShelf):
