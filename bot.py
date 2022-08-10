@@ -6,6 +6,8 @@ import aiohttp
 import discord
 from discord.ext import commands
 
+from translator import Translator
+
 
 MISSING = discord.utils.MISSING
 
@@ -65,6 +67,9 @@ class BookShelf(commands.Bot):
 
     async def setup_hook(self) -> None:
         self.session = aiohttp.ClientSession()
+
+        translator = Translator()
+        await self.tree.set_translator(translator)
 
         for extension in self.initial_extensions:
             await self.load_extension(extension)
