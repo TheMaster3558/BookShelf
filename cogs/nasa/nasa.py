@@ -12,6 +12,7 @@ from .api import NASAClient
 from .database import Database
 from .views import ExplanationView
 
+import checks
 from utils import VirtualContext
 
 if TYPE_CHECKING:
@@ -87,7 +88,7 @@ class NASA(Database, NASAClient, commands.Cog):
         name='apodchannel',
         description='Autopost the APOD in a channel.'
     )
-    @commands.has_permissions(administrator=True)
+    @checks.hybrid_has_permissions(administrator=True)
     async def hybrid_apodchannel(self, ctx: commands.Context):
         if ctx.invoked_subcommand is None:
             await ctx.send_help(ctx.command)

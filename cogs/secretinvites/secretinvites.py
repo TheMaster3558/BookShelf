@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 import discord
 from discord.ext import commands
 
+import checks
 from utils import async_yielder
 
 if TYPE_CHECKING:
@@ -25,7 +26,7 @@ class SecretInvites(commands.Cog):
     async def on_guild_join(self, guild: discord.Guild):
         self.cached_invites[guild.id] = []
         self.guild_invites_ready[guild.id] = asyncio.Event()
-        await asyncio.sleep(100)
+        await asyncio.sleep(120)
 
         if not guild.me.guild_permissions.manage_channels:
             return
@@ -83,20 +84,11 @@ class SecretInvites(commands.Cog):
         await super().cog_load()
         self.bot.loop.create_task(self.populate_cache())
 
-    @commands.hybrid_group(
-        name='secretinvites',
-        aliases=['invite', 'invites'],
-        description='Get invites without anyone knowing! (Can be disabled).'
+    @commands.hybrid_command(
+        name='secretinvite',
+        description='Get a secret invite without anyone knowing!'
     )
-    @commands.guild_only()
-    async def hybrid_secretinvites(self, ctx: commands.Context):
-        if not ctx.invoked_subcommand:
-            await ctx.send_help(ctx.command)
-
-    @hybrid_secretinvites.command(
-        name='get',
-        description='Get a secret invite.'
-    )
+    @checks.hybrid_has_permissions(create_instant_invite=True)
     async def hybrid_get(self, ctx: commands.Context, guild: discord.Guild = commands.CurrentGuild):
         if not self.cached_invites.get(guild.id, []):
             await ctx.send('No cached invites for this server, try again later.', ephemeral=True)

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import contextlib
 import io
 import sys
 import traceback
 from typing import TYPE_CHECKING, Type
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 if TYPE_CHECKING:
@@ -16,7 +16,8 @@ if TYPE_CHECKING:
 class ErrorHandler(commands.Cog):
     secret_perms: tuple[Type[commands.CheckFailure], ...] = (
         commands.MissingPermissions,
-        commands.NotOwner
+        app_commands.MissingPermissions,
+        commands.NotOwner,
     )
 
     def __init__(self, bot: BookShelf):
@@ -28,7 +29,10 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help(ctx.command)
 
-        elif isinstance(error, (*self.secret_perms, commands.TooManyArguments)):
+        elif isinstance(error, self.secret_perms):
+            await ctx.send('You don\'t have permissions to run this command.', ephemeral=True)
+
+        elif isinstance(error, commands.TooManyArguments):
             return
 
         elif isinstance(error, commands.NoPrivateMessage):

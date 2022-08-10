@@ -54,10 +54,15 @@ class TreeSync(commands.Cog):
         description='Sync app commands!'
     )
     @commands.is_owner()
-    async def message_sync(self, ctx: commands.Context, test_guild: bool = False):
+    async def message_sync(self, ctx: commands.Context, test_guild: int | bool = False):
+        if isinstance(test_guild, int) and test_guild > 5000000:
+            guild = discord.Object(id=test_guild)
+        else:
+            guild = self.bot.test_guild
+
         try:
             if test_guild:
-                await self.bot.tree.sync(guild=self.bot.test_guild)
+                await self.bot.tree.sync(guild=guild)
             else:
                 await self.bot.tree.sync()
         except discord.HTTPException as exc:

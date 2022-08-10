@@ -10,6 +10,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands, tasks
 
+import checks
 from .database import AnniversaryDatabase
 
 if TYPE_CHECKING:
@@ -120,7 +121,7 @@ class Anniversary(AnniversaryDatabase, commands.Cog):
         age = math.ceil((next_anniversary - user.created_at).days / 365)
 
         embed = discord.Embed(
-            title=f'{discord.utils.format_dt(next_anniversary, style="R")}, {user.mention} will reach '
+            title=f'{discord.utils.format_dt(next_anniversary, style="R")}, {user} will reach '
                   f'their {self.number_to_word[age]} anniversary.',
             color=self.get_embed_color(user)
         )

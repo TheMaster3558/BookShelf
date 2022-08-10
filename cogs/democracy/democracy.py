@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, TypeVar, Optional, overload
-from sqlite3 import OperationalError
+from typing import TYPE_CHECKING, Any
+from aiosqlite import OperationalError
 
 import discord
 from discord import app_commands
-from discord.ext import commands, tasks  # type: ignore
+from discord.ext import commands, tasks
 
 from .database import DemocracyDatabase
 from utils import get_max, VirtualContext
@@ -155,5 +155,6 @@ class Democracy(DemocracyDatabase, commands.Cog):
         try:
             await channel.send(embed=embed)
         except discord.HTTPException:
-            await ctx.send(f'I don\'t have permission to send messages in {channel.mention}')
-            return
+            await ctx.send(f'I don\'t have permission to send messages in {channel.mention}', ephemeral=True)
+            await ctx.send(embed=embed)
+
