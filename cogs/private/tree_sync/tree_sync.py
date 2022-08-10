@@ -54,9 +54,9 @@ class TreeSync(commands.Cog):
         description='Sync app commands!'
     )
     @commands.is_owner()
-    async def message_sync(self, ctx: commands.Context, test_guild: int | bool = False):
-        if isinstance(test_guild, int) and test_guild > 5000000:
-            guild = discord.Object(id=test_guild)
+    async def message_sync(self, ctx: commands.Context, test_guild: discord.Guild | bool = False):
+        if isinstance(test_guild, discord.Guild):
+            guild = test_guild
         else:
             guild = self.bot.test_guild
 
