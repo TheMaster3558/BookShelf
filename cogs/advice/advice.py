@@ -39,7 +39,7 @@ class Advice(AdviceSlipClient, commands.Cog):
 
     @hybrid_advice.command(
         name='search',
-        description='Search some advice'
+        description='Search some advice.'
     )
     async def hybrid_search(self, ctx: commands.Context, query: str):
         data = await self.search_advice(query)
