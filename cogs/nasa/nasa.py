@@ -70,7 +70,6 @@ class NASA(Database, NASAClient, commands.Cog):
         self.dates_done.append(date)
 
         for channel_tuple in await self.get_channels():
-            print(channel_tuple)
             channel_id = channel_tuple[0]
             try:
                 channel = self.bot.get_channel(channel_id) or await self.bot.fetch_channel(channel_id)
