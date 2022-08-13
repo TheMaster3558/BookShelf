@@ -57,16 +57,7 @@ class FOASSView(AuthoredView):
             await interaction.response.send_modal(modal)
             await modal.wait()
 
-        try:
-            await interaction.delete_original_message()
-        except discord.NotFound:
-            for child in self.children:
-                try:
-                    child.disabled = True
-                except AttributeError:
-                    pass
-            await interaction.edit_original_message(view=self)
-
+        await interaction.message.delete()
         self.stop()
 
 

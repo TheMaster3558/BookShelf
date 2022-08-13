@@ -60,12 +60,13 @@ class TreeSync(commands.Cog):
         else:
             guild = self.bot.test_guild
 
-        try:
-            if test_guild:
-                await self.bot.tree.sync(guild=guild)
+        async with ctx.typing():
+            try:
+                if test_guild:
+                    await self.bot.tree.sync(guild=guild)
+                else:
+                    await self.bot.tree.sync()
+            except discord.HTTPException as exc:
+                await ctx.send(f'There was an error while syncing. \n```\n{exc}\n```')
             else:
-                await self.bot.tree.sync()
-        except discord.HTTPException as exc:
-            await ctx.send(f'There was an error while syncing. \n```\n{exc}\n```')
-        else:
-            await ctx.send('Successfully synced.')
+                await ctx.send('Successfully synced.')

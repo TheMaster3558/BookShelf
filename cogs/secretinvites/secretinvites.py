@@ -6,6 +6,7 @@ import random
 from typing import TYPE_CHECKING
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 import checks
@@ -87,6 +88,9 @@ class SecretInvites(commands.Cog):
     @commands.hybrid_command(
         name='secretinvite',
         description='Get a secret invite without anyone knowing!'
+    )
+    @app_commands.describe(
+        guild='The ID of the server to use, defaults to current server.'
     )
     @checks.hybrid_has_permissions(create_instant_invite=True)
     async def hybrid_get(self, ctx: commands.Context, guild: discord.Guild = commands.CurrentGuild):

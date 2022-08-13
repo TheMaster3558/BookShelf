@@ -39,7 +39,7 @@ class Timestamps(commands.Cog):
 
     @commands.command(
         name='timestamp',
-        description='Easily create a timestamp!'
+        description='Easily create a timestamp! (Note: If `month` does not show up in the form, use the slash command).'
     )
     async def message_timestamp(self, ctx: commands.Context):
         view = InteractionCreator(author=ctx.author)
@@ -59,7 +59,7 @@ class Timestamps(commands.Cog):
         day='The day in the timestamp.',
         month='The month in the timestamp.',
         year='The year in the timestamp.',
-        modal='Whether to send a modal. (Will not have the seconds option).'
+        modal='Whether to send a form. (Will not have the seconds option).'
     )
     async def app_timestamp(
             self,

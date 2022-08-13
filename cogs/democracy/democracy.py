@@ -113,10 +113,7 @@ class Democracy(DemocracyDatabase, commands.Cog):
 
         for vote in data:
             vote_id = vote[0]
-
-            if vote_id not in candidates_id:
-                candidates_id[vote_id] = 0
-
+            candidates_id.setdefault(vote_id, 0)
             candidates_id[vote_id] += 1
 
         top: dict[int, int] = {}

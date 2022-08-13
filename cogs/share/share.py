@@ -92,8 +92,7 @@ class Share(ShareDatabase, commands.Cog):
 
         await ctx.send(embeds=embeds, ephemeral=ephemeral)
 
-        if author not in self.read_count:
-            self.read_count[author] = 0
+        self.read_count.setdefault(author, 0)
         self.read_count[author] += 1
 
     @commands.hybrid_command(

@@ -52,7 +52,7 @@ class WriteSelect(discord.ui.Select['AuthoredView']):
         await interaction.response.defer()
 
         self.disabled = True
-        await interaction.edit_original_message(view=self.view)
+        await interaction.message.edit(view=self.view)
 
         self.value = (self.values[0], self.writes[self.values[0]])
         self.view.stop()  # type: ignore
@@ -76,7 +76,7 @@ class AuthorSelect(discord.ui.Select['AuthoredView']):
         await interaction.response.defer()
 
         self.disabled = True
-        await interaction.edit_original_message(view=self.view)
+        await interaction.message.edit(view=self.view)
 
         self.author = self.values[0]
         self.view.stop()  # type: ignore

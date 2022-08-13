@@ -93,10 +93,13 @@ class HelpCommand(commands.HelpCommand):
         command_list: dict[commands.Command, bool] = {}
 
         async def check(command: commands.Command):
-            if await command.can_run(self.context):
-                canrun = True
-            else:
+            try:
+                await command.can_run(self.context)
+            except commands.CommandError:
                 canrun = False
+            else:
+                canrun = True
+
             command_list[command] = canrun
 
         for cmd in cog.walk_commands():

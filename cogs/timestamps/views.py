@@ -74,7 +74,6 @@ class TimestampModal(discord.ui.Modal, title='Timestamp Creator'):
     def __init__(self, author: discord.abc.Snowflake):
         super().__init__()
         self.author = author
-
         if isinstance(author, discord.Member) and not author.is_on_mobile():
             self.add_item(month_select)
         else:

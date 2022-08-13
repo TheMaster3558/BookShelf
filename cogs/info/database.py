@@ -18,9 +18,7 @@ class EmbedStorage:
 
     def insert(self, id: int, embed: discord.Embed, type: str) -> None:
         key = f'{id}_{type}'
-        if key not in self.data:
-            self.data[key] = []
-
+        self.data.setdefault(key, [])
         self.data[key].append(embed)
 
     def get(self, obj: discord.abc.Snowflake, date: datetime.datetime = None) -> discord.Embed | None:  # type: ignore
