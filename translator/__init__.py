@@ -10,7 +10,7 @@ MISSING = discord.utils.MISSING
 
 class Translator(app_commands.Translator):
     def __init__(self):
-        self.translator = ...
+        self.translator: ... = MISSING
         self.cache = {}
 
     async def load_cache(self):
@@ -31,6 +31,7 @@ class Translator(app_commands.Translator):
             await file.write(dumped)
 
     async def load(self) -> None:
+        self.translator = ...
         await self.load_cache()
 
     async def unload(self) -> None:
@@ -43,9 +44,9 @@ class Translator(app_commands.Translator):
             locale: discord.Locale,
             context: app_commands.TranslationContext
     ) -> str | None:
+        locale = locale.value.lower()  # type: ignore
         translated = self.cache.get(
-            f'{string}_{locale.value}',  # type: ignore
-            string
+            f'{string}_{locale}',
+            None
         )
-        return self.cache.setdefault(f'{string}_{locale.value}', translated)  # type: ignore
-
+        return self.cache.setdefault(f'{string}_{locale}', translated)
