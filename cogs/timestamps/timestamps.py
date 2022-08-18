@@ -29,7 +29,7 @@ class Timestamps(commands.Cog):
         'August': 8,
         'September': 9,
         'October': 10,
-        'November': 1,
+        'November': 11,
         'December': 12
     }
 

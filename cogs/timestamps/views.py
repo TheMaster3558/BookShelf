@@ -6,41 +6,8 @@ import discord
 MISSING = discord.utils.MISSING
 
 
-months = (
-    'January',
-    'February',
-    'March',
-    'April',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-)
-
-
-month_select = discord.ui.Select(
-        placeholder='Month',
-        options=[
-            discord.SelectOption(label=m) for m in months
-        ]
-    )
-
-
-month_text = discord.ui.TextInput(
-    label='Month'
-)
-
-
-year = discord.ui.TextInput(
-        label='Year'
-    )
-
-
 class TimestampModal(discord.ui.Modal, title='Timestamp Creator'):
-    datetime_format = '%M %H %d %B %Y'
+    datetime_format = '%M %H %d %m %Y'
 
     minutes = discord.ui.TextInput(
         label='Minute',
@@ -57,30 +24,19 @@ class TimestampModal(discord.ui.Modal, title='Timestamp Creator'):
         placeholder='1-31 (Depends on month)'
     )
 
-    @property
-    def month(self) -> str:
-        for child in self.children:
-            if isinstance(child, discord.ui.Select) and child.placeholder == 'Month':
-                return child.values[0]
-            elif isinstance(child, discord.ui.TextInput) and child.label == 'Month':
-                return child.value
+    month = discord.ui.TextInput(
+        label='Month',
+        placeholder='1-12'
+    )
 
-    @property
-    def year(self) -> discord.ui.TextInput:
-        for child in self.children:
-            if isinstance(child, discord.ui.TextInput) and child.label == 'Year':
-                return child
+    year = discord.ui.TextInput(
+        label='Year',
+        placeholder='1970+'
+    )
 
     def __init__(self, author: discord.abc.Snowflake):
         super().__init__()
         self.author = author
-        if isinstance(author, discord.Member) and not author.is_on_mobile():
-            self.add_item(month_select)
-        else:
-            self.add_item(month_text)
-
-        self.add_item(year)
-
         self.dt: datetime = MISSING
         self.interaction: discord.Interaction = MISSING
 
@@ -88,7 +44,7 @@ class TimestampModal(discord.ui.Modal, title='Timestamp Creator'):
         m_value = self.minutes.value
         h_value = self.hours.value
         d_value = self.days.value
-        mo_value = self.month
+        mo_value = self.month.value
         y_value = self.year.value
 
         while len(m_value) < 2:
@@ -97,6 +53,8 @@ class TimestampModal(discord.ui.Modal, title='Timestamp Creator'):
             h_value = '0' + h_value
         while len(d_value) < 2:
             d_value = '0' + d_value
+        while len(mo_value) < 2:
+            mo_value = '0' + mo_value
         while len(y_value) < 4:
             y_value = '0' + y_value
 
@@ -105,7 +63,8 @@ class TimestampModal(discord.ui.Modal, title='Timestamp Creator'):
 
         try:
             self.dt = datetime.strptime(format_text, self.datetime_format)
-        except ValueError:
+        except ValueError as e:
+            print(e)
             await interaction.response.send_message('A part of the timestamp was invalid.', ephemeral=True)
             return
 
@@ -185,7 +144,7 @@ class StyleSelect(discord.ui.Select['StyleView']):
             placeholder='Select a style!'
         )
 
-    async def callback(self, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         self.disabled = True
         await interaction.message.edit(view=self.view)
