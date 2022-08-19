@@ -35,7 +35,7 @@ class Translator(app_commands.Translator):
         await self.load_cache()
 
     async def unload(self) -> None:
-        await self.translator.close()
+#        await self.translator.close()
         await self.save_cache()
 
     async def translate(

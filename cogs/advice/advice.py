@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 
 class Advice(AdviceSlipClient, commands.Cog):
+    """Get some advice from a Discord Bot."""
     def __init__(self, bot: BookShelf):
         self.bot = bot
         super().__init__()

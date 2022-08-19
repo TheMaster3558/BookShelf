@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Iterable, Optional, Sequence
 
 from datetime import datetime, timedelta
 
@@ -31,7 +31,7 @@ class DemocracyDatabase:
         await self.db.close()
 
     async def create_election(self, guild: discord.Guild, expiry: int, channel: discord.TextChannel) -> str:
-        expiry: datetime = discord.utils.utcnow() + timedelta(days=expiry)  # type: ignore
+        expiry: datetime = discord.utils.utcnow() + timedelta(days=expiry)
 
         try:
             await self.db.execute(
@@ -80,7 +80,7 @@ class DemocracyDatabase:
 
         return updated
 
-    async def finish_election(self, guild: discord.Guild):
+    async def finish_election(self, guild: discord.Guild) -> Iterable[tuple[int, int]]:
         async with self.db.execute(
             f'''
             SELECT who FROM "votes_{guild.id}";
@@ -106,9 +106,9 @@ class DemocracyDatabase:
 
         return results
 
-    async def get_end(self, guild: Optional[discord.Guild] = None):
+    async def get_end(self, guild: Optional[discord.Guild] = None) -> Sequence[tuple[int, str, int]]:
         sql = '''
-        SELECT * FROM "elections"
+        SELECT channel_id FROM "elections"
         '''
         if guild:
             sql += f'''

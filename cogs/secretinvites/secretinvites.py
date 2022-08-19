@@ -17,6 +17,8 @@ if TYPE_CHECKING:
 
 
 class SecretInvites(commands.Cog):
+    """Get invites without dumb mods knowing."""
+
     def __init__(self, bot: BookShelf):
         self.bot = bot
         self.cached_invites: dict[int, list[discord.Invite]] = {}
@@ -63,7 +65,7 @@ class SecretInvites(commands.Cog):
         except ValueError:
             pass
 
-    async def populate_cache(self):
+    async def populate_cache(self) -> None:
         await self.bot.wait_until_ready()
         self.cached_invites = {guild.id: [] for guild in self.bot.guilds}
         self.guild_invites_ready = {guild.id: asyncio.Event() for guild in self.bot.guilds}

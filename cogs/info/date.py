@@ -29,4 +29,4 @@ class DateConverter(commands.Converter):
             raise commands.BadArgument('Expected date in format `<day>/<month>/[year]`')
 
 
-DateParameter = commands.parameter(converter=DateConverter, default=None, displayed_default='<any>')
+date_parameter = commands.parameter(converter=DateConverter, default=None, displayed_default='<any>')

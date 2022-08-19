@@ -10,24 +10,24 @@ import foaap
 from utils import AuthoredView, AlmostInteractionContext
 
 if TYPE_CHECKING:
-    from .foass import MiniArgs
+    from .foaas import MiniArgs
 
 
 MISSING = discord.utils.MISSING
 
 
-class FOASSSelect(discord.ui.Select['FOASSView']):
+class FOAASSelect(discord.ui.Select['FOAASView']):
     def __init__(self, options: list[str]):
         options = [
             discord.SelectOption(label=option.replace('_', ' ').capitalize(), value=option) for option in options
         ]
         super().__init__(placeholder='Select an option', options=options)
 
-    async def callback(self, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction) -> None:
         await self.view.do_next(interaction, self)
 
 
-class FOASSView(AuthoredView):
+class FOAASView(AuthoredView):
     SELECT_ONE = foaap.__all__[:25]
     SELECT_TWO = foaap.__all__[25:50]
     SELECT_THREE = foaap.__all__[50:75]
@@ -39,10 +39,10 @@ class FOASSView(AuthoredView):
         self.args: list[str] = []
 
         selects = (
-            FOASSSelect(self.SELECT_ONE),
-            FOASSSelect(self.SELECT_TWO),
-            FOASSSelect(self.SELECT_THREE),
-            FOASSSelect(self.SELECT_FOUR)
+            FOAASSelect(self.SELECT_ONE),
+            FOAASSelect(self.SELECT_TWO),
+            FOAASSelect(self.SELECT_THREE),
+            FOAASSelect(self.SELECT_FOUR)
         )
         for select in selects:
             self.add_item(select)
@@ -53,7 +53,7 @@ class FOASSView(AuthoredView):
         if len(inspect.signature(self.method).parameters) <= 1:
             await interaction.response.defer()
         else:
-            modal = FOASSModal(self.method, self)
+            modal = FOAASModal(self.method, self)
             await interaction.response.send_modal(modal)
             await modal.wait()
 
@@ -61,8 +61,8 @@ class FOASSView(AuthoredView):
         self.stop()
 
 
-class FOASSModal(discord.ui.Modal):
-    def __init__(self, method: Callable[..., str], view: FOASSView | MiniArgs):
+class FOAASModal(discord.ui.Modal):
+    def __init__(self, method: Callable[..., str], view: FOAASView | MiniArgs):
         self.view = view
 
         self.method = method

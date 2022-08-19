@@ -76,7 +76,7 @@ class ErrorHandler(commands.Cog):
                     file=sys.stderr
                 )
 
-    async def bad_argument_handler(self, ctx: commands.Context, error: commands.BadArgument):
+    async def bad_argument_handler(self, ctx: commands.Context, error: commands.BadArgument) -> None:
         if isinstance(error, (commands.MemberNotFound, commands.UserNotFound)):
             await ctx.send('That user was not found.', ephemeral=True)
         elif isinstance(error, commands.ChannelNotFound):
@@ -87,5 +87,5 @@ class ErrorHandler(commands.Cog):
             await ctx.send(str(error))
 
 
-async def setup(bot: BookShelf):
+async def setup(bot: BookShelf) -> None:
     await bot.add_cog(ErrorHandler(bot))

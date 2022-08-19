@@ -1,5 +1,6 @@
 import aiosqlite
 import discord
+from typing import Iterable
 
 
 MISSING = discord.utils.MISSING
@@ -37,7 +38,7 @@ class ShareDatabase:
             return f'You already have a story named "{name}"'
         return f'Your writing has been saved!'
 
-    async def fetch_writes(self, user: discord.Member | discord.User):
+    async def fetch_writes(self, user: discord.Member | discord.User) -> Iterable[tuple[str, str]]:
         async with self.db.execute(
                 f'''
             SELECT * FROM "{user.id}"

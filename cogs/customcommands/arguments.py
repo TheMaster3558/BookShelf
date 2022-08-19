@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Type
 
 from discord.ext import commands
 
@@ -8,7 +9,7 @@ from discord.ext import commands
 @dataclass
 class Argument:
     name: str
-    annotation: type[commands.Converter] | None
+    annotation: Type[commands.Converter] | None
     default: str | None
 
     def is_optional(self) -> bool:

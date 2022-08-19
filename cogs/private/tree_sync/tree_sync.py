@@ -40,7 +40,7 @@ class TreeSync(commands.Cog):
     async def check_if_should_sync(self) -> bool:
         return self.app_commands_to_list() != await self.get_app_commands()
 
-    async def sync(self):
+    async def sync(self) -> None:
         await self.bot.wait_until_ready()
         if await self.check_if_should_sync():
             await self.bot.tree.sync()

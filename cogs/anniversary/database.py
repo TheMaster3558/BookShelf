@@ -1,3 +1,5 @@
+from typing import Iterable
+
 import aiosqlite
 import discord
 
@@ -9,7 +11,7 @@ class AnniversaryDatabase:
     def __init__(self):
         self.db: aiosqlite.Connection = MISSING
 
-    async def cog_load(self):
+    async def cog_load(self) -> None:
         self.db = await aiosqlite.connect('./cogs/anniversary/anniversary.db')
 
         await self.db.execute(
@@ -22,10 +24,10 @@ class AnniversaryDatabase:
         )
         await self.db.commit()
 
-    async def cog_unload(self):
+    async def cog_unload(self) -> None:
         await self.db.close()
 
-    async def add_year(self, user: discord.abc.Snowflake, year: int):
+    async def add_year(self, user: discord.abc.Snowflake, year: int) -> None:
         try:
             await self.db.execute(
                 '''
@@ -45,7 +47,7 @@ class AnniversaryDatabase:
 
         await self.db.commit()
 
-    async def get_all_users(self):
+    async def get_all_users(self) -> Iterable[tuple[int, int]]:
         async with self.db.execute(
             '''
             SELECT * FROM "anniversaries";

@@ -17,7 +17,7 @@ class UwuifySelect(discord.ui.Select['UwuifyView']):
 
         self.level: int = -1
 
-    def set_level(self):
+    def set_level(self) -> None:
         raw = self.values[0]
 
         match raw:
@@ -28,7 +28,7 @@ class UwuifySelect(discord.ui.Select['UwuifyView']):
             case '2':
                 self.level = Owoness.Uvu
 
-    async def callback(self, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         self.disabled = True
         self.set_level()
@@ -59,7 +59,7 @@ class ReplaceView(AuthoredView):
         self.embed = embed
 
     @discord.ui.button(label='Click to add', style=discord.ButtonStyle.green)
-    async def start_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def start_button(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
         modal = ReplaceModal()
         await interaction.response.send_modal(modal)
         await modal.wait()
@@ -69,7 +69,7 @@ class ReplaceView(AuthoredView):
         await interaction.message.edit(embed=self.embed)
 
     @discord.ui.button(label='Finish', style=discord.ButtonStyle.blurple)
-    async def finish_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def finish_button(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
         await interaction.response.defer()
         self.stop()
 

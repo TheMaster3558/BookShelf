@@ -9,7 +9,7 @@ extensions = (
 )
 
 
-async def setup(bot):
+async def setup(bot) -> None:
     for extension in extensions:
         try:
             await bot.load_extension(f'cogs.private.{extension}')
@@ -17,7 +17,7 @@ async def setup(bot):
             pass
 
 
-async def teardown(bot):
+async def teardown(bot) -> None:
     for extension in extensions:
         try:
             await bot.unload_extension(f'cogs.private.{extension}')

@@ -42,7 +42,7 @@ class BookShelf(commands.Bot):
         'cogs.info',
         'cogs.customcommands',
         'cogs.advice',
-        'cogs.foass',
+        'cogs.foaas',
         'cogs.private',
         'jishaku',
         'cogs.timestamps',

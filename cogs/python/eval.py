@@ -1,7 +1,6 @@
 from io import StringIO
-from typing import TypeAlias
 
-import asteval  # type: ignore
+import asteval
 from discord.ext import commands
 
 
@@ -35,7 +34,7 @@ class AstevalEval:
     def format_err(err: str) -> str:
         return f'\u001b[0;31m{err}'
 
-    def run_eval(self, code: str, user_id: int):
+    def run_eval(self, code: str, user_id: int) -> str:
         interpreter = self.get_interpreter(user_id)
 
         interpreter.eval(code)

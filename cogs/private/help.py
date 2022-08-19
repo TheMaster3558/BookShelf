@@ -19,7 +19,7 @@ class HelpCommand(commands.HelpCommand):
             embed: Optional[discord.Embed] = None,
             embeds: Sequence[discord.Embed] = (),
             channel: Optional[discord.abc.Messageable] = None
-    ):
+    ) -> None:
         embeds = list(embeds)
 
         if channel is None:
@@ -110,7 +110,7 @@ class HelpCommand(commands.HelpCommand):
     async def get_cog_embed(self, cog: commands.Cog) -> discord.Embed:
         embed = discord.Embed(
             title=cog.qualified_name,
-            description=cog.description
+            description=cog.description or 'No description'
         )
 
         for command in await self.get_runnable_commands(cog):
@@ -214,5 +214,5 @@ class Help(commands.Cog):
         await msg.edit(embed=embed)
 
 
-async def setup(bot: BookShelf):
+async def setup(bot: BookShelf) -> None:
     await bot.add_cog(Help(bot))

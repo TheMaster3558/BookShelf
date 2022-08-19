@@ -72,14 +72,14 @@ class CommandStorage:
 
         return custom_command
 
-    async def to_file(self):
+    async def to_file(self) -> None:
         data = [command.to_dict() for command in self.commands_to_store]
         dumped = json.dumps(data, indent=4)
 
         async with aiofiles.open('./cogs/customcommands/command_storage.json', 'w') as file:
             await file.write(dumped)
 
-    async def from_file(self):
+    async def from_file(self) -> None:
         async with aiofiles.open('./cogs/customcommands/command_storage.json', 'r') as file:
             raw = await file.read()
 
@@ -102,8 +102,8 @@ class CommandStorage:
             )
             self.bot.add_command(command)
 
-    async def cog_load(self):
+    async def cog_load(self) -> None:
         await self.from_file()
 
-    async def cog_unload(self):
+    async def cog_unload(self) -> None:
         await self.to_file()

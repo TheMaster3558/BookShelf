@@ -21,7 +21,7 @@ class EmbedStorage:
         self.data.setdefault(key, [])
         self.data[key].append(embed)
 
-    def get(self, obj: discord.abc.Snowflake, date: datetime.datetime = None) -> discord.Embed | None:  # type: ignore
+    def get(self, obj: discord.abc.Snowflake, date: datetime.datetime = None) -> discord.Embed | None:
         if not date:
             return None
 
@@ -36,20 +36,20 @@ class EmbedStorage:
             if embed.timestamp.day == date.day:
                 return embed
 
-    async def cog_load(self):
+    async def cog_load(self) -> None:
         await self.from_file()
 
-    async def cog_unload(self):
+    async def cog_unload(self) -> None:
         await self.to_file()
 
-    async def to_file(self):
+    async def to_file(self) -> None:
         data = {id: [embed.to_dict() for embed in embeds] for id, embeds in self.data.items()}
         dumped = json.dumps(data, indent=4)
 
         async with aiofiles.open('./cogs/info/embed_storage.json', 'w') as file:
             await file.write(dumped)
 
-    async def from_file(self):
+    async def from_file(self) -> dict:
         async with aiofiles.open('./cogs/info/embed_storage.json', 'r') as file:
             raw = await file.read()
 

@@ -48,4 +48,3 @@ class DBooks(DBooksClient, commands.Cog):
         embed.set_thumbnail(url=data['image'])
 
         await ctx.send(embed=embed)
-

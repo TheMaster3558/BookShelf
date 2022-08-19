@@ -25,11 +25,11 @@ class Backup(commands.Cog):
         self.bot = bot
 
     @tasks.loop(minutes=20)
-    async def backup_task(self):
+    async def backup_task(self) -> None:
         await self.backup()
 
     @backup_task.after_loop
-    async def finish(self):
+    async def finish(self) -> None:
         await self.backup()
 
     # actually fetching the backup data will be made if we ever need it
@@ -75,5 +75,5 @@ class Backup(commands.Cog):
         await ctx.send(f'The following have been backed up {", ".join(successes)}')
 
 
-async def setup(bot: BookShelf):
+async def setup(bot: BookShelf) -> NOne:
     await bot.add_cog(Backup(bot))

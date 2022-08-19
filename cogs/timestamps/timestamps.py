@@ -18,6 +18,8 @@ MISSING = discord.utils.MISSING
 
 
 class Timestamps(commands.Cog):
+    """Make some really cool timestamps!"""
+
     conversions = {
         'January': 1,
         'February': 2,

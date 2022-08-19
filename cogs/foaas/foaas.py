@@ -10,7 +10,7 @@ from discord import app_commands
 from discord.ext import commands
 from fuzzywuzzy import fuzz
 
-from .views import FOASSView, FOASSModal
+from .views import FOAASView, FOAASModal
 from utils import get_max
 
 if TYPE_CHECKING:
@@ -26,20 +26,21 @@ class MiniArgs:
         self.args = []
 
 
-class FOASS(commands.Cog):
+class FOAAS(commands.Cog):
+    """Fuck Off As A Service."""
     def __init__(self, bot: BookShelf):
         self.bot = bot
         super().__init__()
 
     async def cog_unload(self) -> None:
-        self.foass_type_autocomplete.cache_clear()
+        self.foaas_type_autocomplete.cache_clear()
 
     @commands.command(
-        name='foass',
+        name='foaas',
         description='Say some colorful things to your friends!'
     )
-    async def message_foass(self, ctx: commands.Context):
-        view = FOASSView(ctx.author)
+    async def message_foaas(self, ctx: commands.Context):
+        view = FOAASView(ctx.author)
         await ctx.send(view=view, ephemeral=True)
         await view.wait()
 
@@ -47,13 +48,13 @@ class FOASS(commands.Cog):
         await ctx.send(message)
 
     @app_commands.command(
-        name='foass',
+        name='foaas',
         description='Say some colorful things to your friends!'
     )
     @app_commands.rename(
         _type='type'
     )
-    async def app_foass(self, interaction: discord.Interaction, _type: str):
+    async def app_foaas(self, interaction: discord.Interaction, _type: str):
         method = getattr(foaap, _type, None)
         if not method:
             await interaction.response.send_message(
@@ -64,7 +65,7 @@ class FOASS(commands.Cog):
         args = MiniArgs()
 
         if len(inspect.signature(method).parameters) > 1:
-            modal = FOASSModal(method, args)
+            modal = FOAASModal(method, args)
             await interaction.response.send_modal(modal)
             await modal.wait()
 
@@ -75,8 +76,9 @@ class FOASS(commands.Cog):
         await interaction.channel.send(message)
 
     @functools.cache
-    @app_foass.autocomplete('_type')
-    async def foass_type_autocomplete(self, interaction: discord.Interaction, current: str):
+    @app_foaas.autocomplete('_type')
+    async def foaas_type_autocomplete(self, interaction: discord.Interaction, current: str
+                                      ) -> list[app_commands.Choice[str]]:
         current = current.lower()
         highest: dict[app_commands.Choice[str], int] = {}
         names: list[app_commands.Choice[str]] = []

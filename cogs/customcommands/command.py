@@ -29,13 +29,11 @@ class CustomCommand(commands.Command):
         }
         return data
 
-    async def error_handler(self, ctx: commands.Context, error: commands.CommandError):
-        if isinstance(error, commands.CommandInvokeError):
-            if isinstance(error.original, ValueError):
-                await ctx.send('The `output` for this command may have not been formatted correctly.'
-                               'Try deleting and remaking it.')
-                return
-        if isinstance(error, commands.CheckFailure):
+    async def error_handler(self, ctx: commands.Context, error: commands.CommandError) -> None:
+        if isinstance(error, commands.CommandInvokeError) and isinstance(error.original, ValueError):
+            await ctx.send('The `output` for this command may have not been formatted correctly.'
+                           'Try deleting and remaking it.')
+        elif isinstance(error, commands.CheckFailure):
             return
-
-        raise error
+        else:
+            raise error

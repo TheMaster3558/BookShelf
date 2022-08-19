@@ -6,7 +6,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from .date import DateParameter
+from .date import date_parameter
 from .embed import EmbedBuilder
 
 if TYPE_CHECKING:
@@ -30,7 +30,7 @@ class Info(EmbedBuilder, commands.Cog):
     )
     async def hybrid_userinfo(self, ctx: commands.Context,
                               user: Optional[discord.Member | discord.User] = commands.Author,
-                              date: datetime.datetime = DateParameter):
+                              date: datetime.datetime = date_parameter):
         if isinstance(user, discord.Member):
             embed = self.build_member_embed(user, date)
         else:
@@ -45,7 +45,7 @@ class Info(EmbedBuilder, commands.Cog):
     )
     @commands.guild_only()
     @app_commands.describe(date='The date to get the info from.')
-    async def hybrid_serverinfo(self, ctx: commands.Context, date: datetime.datetime = DateParameter):
+    async def hybrid_serverinfo(self, ctx: commands.Context, date: datetime.datetime = date_parameter):
         embed = await self.build_guild_embed(ctx.guild, date)
         await ctx.send(embed=embed)
 
@@ -58,6 +58,6 @@ class Info(EmbedBuilder, commands.Cog):
         date='The date to get the info from.'
     )
     async def hybrid_roleinfo(self, ctx: commands.Context, role: discord.Role,
-                              date: datetime.datetime = DateParameter):
+                              date: datetime.datetime = date_parameter):
         embed = self.build_role_embed(role, date)
         await ctx.send(embed=embed)

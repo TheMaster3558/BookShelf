@@ -88,8 +88,7 @@ class EmbedBuilder(EmbedStorage):
 
             colors = await asyncio.to_thread(extract, file, 1)
             r, g, b = colors[0].rgb
-            embed.color = discord.Color.from_rgb(r, g, b)  # type: ignore # property has setter
-
+            embed.color = discord.Color.from_rgb(r, g, b)
         embed.add_field(
             name='Created',
             value=discord.utils.format_dt(guild.created_at)
@@ -170,4 +169,3 @@ class EmbedBuilder(EmbedStorage):
         self.insert(role.id, embed, 'role')
 
         return embed
-

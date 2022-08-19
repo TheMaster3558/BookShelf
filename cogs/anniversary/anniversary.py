@@ -10,7 +10,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands, tasks
 
-import checks
 from .database import AnniversaryDatabase
 
 if TYPE_CHECKING:
@@ -18,6 +17,7 @@ if TYPE_CHECKING:
 
 
 class Anniversary(AnniversaryDatabase, commands.Cog):
+    """See when your next anniversary on Discord is. Because we all celebrate that."""
     number_to_word: dict[int, str] = {
         1: 'first',
         2: 'second',
@@ -42,16 +42,16 @@ class Anniversary(AnniversaryDatabase, commands.Cog):
         self.bot = bot
         super().__init__()
 
-    async def cog_load(self):
+    async def cog_load(self) -> None:
         await super().cog_load()
         self.check_years.start()
 
-    async def cog_unload(self):
+    async def cog_unload(self) -> None:
         self.check_years.cancel()
         await super().cog_unload()
 
     @tasks.loop(hours=6)
-    async def check_years(self):
+    async def check_years(self) -> None:
         users = {k: v for k, v in await self.get_all_users()}
         now = discord.utils.utcnow()
 
@@ -79,7 +79,7 @@ class Anniversary(AnniversaryDatabase, commands.Cog):
                 await asyncio.sleep(0.2)
 
     @check_years.before_loop
-    async def wait_until_ready(self):
+    async def wait_until_ready(self) -> None:
         await self.bot.wait_until_ready()
 
     def get_embed_color(self, user: discord.User) -> discord.Color:

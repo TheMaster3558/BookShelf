@@ -13,7 +13,9 @@ if TYPE_CHECKING:
     from bot import BookShelf
 
 
-class Text(commands.GroupCog):
+class Text(commands.GroupCog, description='Do cool stuff to some text.'):
+    """Dwo cwoowl stuff two swomwe text."""
+
     def __init__(self, bot: BookShelf):
         self.bot = bot
 

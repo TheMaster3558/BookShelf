@@ -1,23 +1,19 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Iterable
 
 import discord
-
-if TYPE_CHECKING:
-    from utils import AuthoredView
-
 
 MISSING = discord.utils.MISSING
 
 
 class WritingModal(discord.ui.Modal, title='Write a story'):
-    name: discord.ui.TextInput = discord.ui.TextInput(
+    name = discord.ui.TextInput(
         label='Name',
         placeholder='The name of the story'
     )
 
-    text: discord.ui.TextInput = discord.ui.TextInput(
+    text= discord.ui.TextInput(
         label='Text',
         placeholder='Your story here',
         style=discord.TextStyle.paragraph
@@ -33,7 +29,7 @@ class WritingModal(discord.ui.Modal, title='Write a story'):
 
 
 class WriteSelect(discord.ui.Select['AuthoredView']):
-    def __init__(self, writes: list[tuple[str, str]]):
+    def __init__(self, writes: Iterable[tuple[str, str]]):
         self.writes = dict(writes)
 
         options = [
@@ -48,14 +44,14 @@ class WriteSelect(discord.ui.Select['AuthoredView']):
 
         self.value: tuple[str, str] = MISSING
 
-    async def callback(self, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
 
         self.disabled = True
         await interaction.message.edit(view=self.view)
 
         self.value = (self.values[0], self.writes[self.values[0]])
-        self.view.stop()  # type: ignore
+        self.view.stop()
 
 
 class AuthorSelect(discord.ui.Select['AuthoredView']):
@@ -72,7 +68,7 @@ class AuthorSelect(discord.ui.Select['AuthoredView']):
 
         self.author: str = MISSING
 
-    async def callback(self, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
 
         self.disabled = True
