@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import functools
 from typing import Optional
 
 import aiohttp

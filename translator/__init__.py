@@ -1,6 +1,7 @@
-import json
+import asyncio
+import re
 
-import aiofiles
+import argostranslate.package, argostranslate.translate
 import discord
 from discord import app_commands
 
@@ -9,34 +10,35 @@ MISSING = discord.utils.MISSING
 
 
 class Translator(app_commands.Translator):
+    validation_regex = re.compile(r'[-_\p{L}\p{N}\p{sc=Deva}\p{sc=Thai}]{1,32}')
+
     def __init__(self):
-        self.translator: ... = MISSING
-        self.cache = {}
+        self.translators: dict[str, argostranslate.translate.ITranslation] = {}
 
-    async def load_cache(self):
-        async with aiofiles.open('./translator/cache.json', 'r') as file:
-            raw = await file.read()
+    def install_languages(self):
+        codes = [e.value.split('-')[0] for e in discord.Locale]
 
-        try:
-            self.cache = json.loads(raw)
-        except json.JSONDecodeError:
-            async with aiofiles.open('./translator/cache.json', 'w') as file:
-                await file.write('{}')
-            await self.load_cache()
+        argostranslate.package.update_package_index()
+        available_packages = [
+            package for package in argostranslate.package.get_available_packages()
+            if package.from_code == 'en' and package.to_code in codes
+        ]
 
-    async def save_cache(self):
-        dumped = json.dumps(self.cache)
+        for package in available_packages:
+            package.install()
 
-        async with aiofiles.open('./translator/cache.json', 'w') as file:
-            await file.write(dumped)
+        languages = argostranslate.translate.get_installed_languages()
 
-    async def load(self) -> None:
-        self.translator = ...
-        await self.load_cache()
+        english: argostranslate.translate.Language = MISSING
+        for language in languages:
+            if language.code == 'en':
+                english = language
 
-    async def unload(self) -> None:
-#        await self.translator.close()
-        await self.save_cache()
+        assert english is not MISSING
+
+        for language in languages:
+            translator = english.get_translation(language)
+            self.translators[language.code] = translator
 
     async def translate(
             self,
@@ -44,9 +46,11 @@ class Translator(app_commands.Translator):
             locale: discord.Locale,
             context: app_commands.TranslationContext
     ) -> str | None:
-        locale = locale.value.lower()  # type: ignore
-        translated = self.cache.get(
-            f'{string}_{locale}',
-            None
-        )
-        return self.cache.setdefault(f'{string}_{locale}', translated)
+        if not self.translators:
+            await asyncio.to_thread(self.install_languages)
+
+        locale = locale.value.split('-')[0]  # type: ignore
+        try:
+            translations = self.translators[locale].hypotheses(str(string))
+        except KeyError:
+            return None
