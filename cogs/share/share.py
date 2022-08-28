@@ -132,6 +132,5 @@ class Share(ShareDatabase, commands.Cog):
         await view.wait()
 
         author_id = popular_ids[select.author]
-        author = self.bot.get_user(author_id) or await self.bot.fetch_user(author_id)
-
+        author = await self.bot.get_or_fetch(self.bot.fetch_user, author_id)
         await self.hybrid_read.callback(self, ctx, author)

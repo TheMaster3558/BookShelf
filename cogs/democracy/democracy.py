@@ -38,7 +38,7 @@ class Democracy(DemocracyDatabase, commands.Cog):
             if time > discord.utils.utcnow():
                 continue
 
-            guild = self.bot.get_channel(guild_id) or await self.bot.fetch_guild(guild_id)
+            guild = await self.bot.get_or_fetch(self.bot.fetch_guild, guild_id)
             ctx: Any = VirtualContext(guild=guild)
             self.bot.loop.create_task(self.hybrid_finish(ctx))
 
@@ -135,7 +135,7 @@ class Democracy(DemocracyDatabase, commands.Cog):
             return
 
         top: dict[discord.Member, int] = {  # type: ignore
-            ctx.guild.get_member(k) or await ctx.guild.fetch_member(k): v
+            await self.bot.get_or_fetch(ctx.guild.fetch_member, k): v
             for k, v in top.items()
         }
 
@@ -147,7 +147,7 @@ class Democracy(DemocracyDatabase, commands.Cog):
         for member, count in top.items():
             embed.add_field(name=str(member), value=f'{count} votes')
 
-        channel = ctx.guild.get_channel(channel_id) or await ctx.guild.fetch_channel(channel_id)
+        channel = await self.bot.get_or_fetch(ctx.guild.fetch_channel, channel_id)
 
         try:
             await channel.send(embed=embed)

@@ -1,11 +1,13 @@
 import asyncio
 import logging
-import functools
-from typing import Optional
+from typing import Any, Callable, Coroutine, Optional, TypeVar
 
 import aiohttp
 import discord
 from discord.ext import commands
+
+
+T = TypeVar('T')
 
 
 MISSING = discord.utils.MISSING
@@ -46,7 +48,8 @@ class BookShelf(commands.Bot):
         'jishaku',
         'cogs.timestamps',
         'cogs.secretinvites',
-        'cogs.text'
+        'cogs.text',
+        'cogs.roles'
     ]
 
     test_guild = discord.Object(id=878431847162466354)
@@ -88,3 +91,14 @@ class BookShelf(commands.Bot):
                 await self.start(token, reconnect=reconnect)
 
         asyncio.run(runner(), debug=True)
+
+    # extra utils
+
+    @staticmethod
+    async def get_or_fetch(async_method: Callable[[int], Coroutine[Any, Any, T]], snowflake: int) -> T:
+        sync_method_name: str = async_method.__name__.replace('fetch', 'get')
+        sync_method: Callable[[int], T] = getattr(
+            async_method.__self__, sync_method_name   # type: ignore
+        )
+
+        return sync_method(snowflake) or await async_method(snowflake)

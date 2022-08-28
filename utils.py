@@ -35,7 +35,7 @@ class InteractionCreator(AuthoredView):
         self.interaction: discord.Interaction = MISSING
 
     @discord.ui.button(label='Click to start!', style=discord.ButtonStyle.green)
-    async def creator(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def creator(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
         self.interaction = interaction
 
         with contextlib.suppress(discord.HTTPException):

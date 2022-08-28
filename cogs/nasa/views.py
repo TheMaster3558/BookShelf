@@ -9,5 +9,5 @@ class ExplanationView(AuthoredView):
         super().__init__(author, timeout=None)
 
     @discord.ui.button(label='Explanation')
-    async def description_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def description_button(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
         await interaction.response.send_message(self.explanation, ephemeral=True)

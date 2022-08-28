@@ -72,7 +72,7 @@ class NASA(Database, NASAClient, commands.Cog):
         for channel_tuple in await self.get_channels():
             channel_id = channel_tuple[0]
             try:
-                channel = self.bot.get_channel(channel_id) or await self.bot.fetch_channel(channel_id)
+                channel = await self.bot.get_or_fetch(self.bot.fetch_channel, channel_id)
             except discord.HTTPException:
                 continue
 

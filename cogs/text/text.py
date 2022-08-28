@@ -21,7 +21,7 @@ class Text(commands.GroupCog, description='Do cool stuff to some text.'):
 
     @commands.hybrid_command(
         name='uwuify',
-        descritpion='uwu.'
+        description='uwu.'
     )
     @app_commands.describe(text='The text to uwuify.')
     async def hybrid_uwuify(self, ctx: commands.Context, *, text: str):
@@ -46,5 +46,13 @@ class Text(commands.GroupCog, description='Do cool stuff to some text.'):
         await view.wait()
 
         text = text.translate(view.replacements)
+        await ctx.send(text)
+
+    @commands.hybrid_command(
+        name='reverse',
+        description='Reverse some text.'
+    )
+    async def hybrid_reverse(self, ctx: commands.Context, *, text: str):
+        text = ''.join(reversed(text))
         await ctx.send(text)
 
