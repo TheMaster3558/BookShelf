@@ -367,6 +367,3 @@ class RoleEditView(discord.ui.View):
             child.disabled = True  # type: ignore
         await interaction.message.edit(view=self)
         self.stop()
-
-
-
