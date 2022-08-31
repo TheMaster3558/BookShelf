@@ -61,5 +61,4 @@ class EmbedStorage:
             return await self.from_file()
 
         for id, embeds in data.items():
-
             self.data[id] = [discord.Embed.from_dict(embed) for embed in embeds]

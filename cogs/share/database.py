@@ -3,45 +3,45 @@ import discord
 from typing import Iterable
 
 
-MISSING = discord.utils.MISSING
-
-
 class ShareDatabase:
     def __init__(self):
-        self.db: aiosqlite.Connection = MISSING
+        self.db: aiosqlite.Connection = aiosqlite.connect('./cogs/share/share.db')
 
     async def cog_load(self) -> None:
-        self.db = await aiosqlite.connect('./cogs/share/share.db')
+        await self.db
 
     async def cog_unload(self) -> None:
         await self.db.close()
 
-    async def process_write(self, user: discord.Member | discord.User, name: str, text: str) -> str:
-        await self.db.execute(
-            f'''
-            CREATE TABLE IF NOT EXISTS "{user.id}" (
-                        name TEXT PRIMARY KEY,
-                        text TEXT
-            );
-            '''
-        )
-
-        try:
-            await self.db.execute(
+    async def process_write(self, user: discord.abc.User, name: str, text: str) -> str:
+        async with self.db.cursor() as cursor:
+            await cursor.execute(
                 f'''
-                INSERT INTO "{user.id}" VALUES (?, ?)
-                ''',
-                (name, text)
+                CREATE TABLE IF NOT EXISTS "{user.id}" (
+                            name TEXT PRIMARY KEY,
+                            text TEXT
+                );
+                '''
             )
-            await self.db.commit()
-        except aiosqlite.IntegrityError:
-            return f'You already have a story named "{name}"'
+
+            try:
+                await cursor.execute(
+                    f'''
+                    INSERT INTO "{user.id}" VALUES (?, ?)
+                    ''',
+                    (name, text)
+                )
+            except aiosqlite.IntegrityError:
+                return f'You already have a story named "{name}"'
+
+        await self.db.commit()
         return f'Your writing has been saved!'
 
-    async def fetch_writes(self, user: discord.Member | discord.User) -> Iterable[tuple[str, str]]:
-        async with self.db.execute(
+    async def fetch_writes(self, user: discord.abc.User) -> Iterable[tuple[str, str]]:
+        async with self.db.cursor() as cursor:
+            await cursor.execute(
                 f'''
-            SELECT * FROM "{user.id}"
-            '''
-        ) as cursor:
+                SELECT * FROM "{user.id}";
+                '''
+            )
             return await cursor.fetchall()

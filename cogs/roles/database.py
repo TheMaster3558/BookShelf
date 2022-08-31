@@ -32,15 +32,17 @@ class RolesDatabase:
 
     async def cog_load(self) -> None:
         await self.from_file()
+
         await self.db
-        await self.db.execute(
-            '''
-            CREATE TABLE IF NOT EXISTS "authors" (
-                    message_id INT PRIMARY KEY,
-                    author_id INT
-            );
-            '''
-        )
+        async with self.db.cursor() as cursor:
+            await cursor.execute(
+                '''
+                CREATE TABLE IF NOT EXISTS "authors" (
+                        message_id INT PRIMARY KEY,
+                        author_id INT
+                );
+                '''
+            )
         await self.db.commit()
 
     async def cog_unload(self) -> None:
@@ -56,55 +58,60 @@ class RolesDatabase:
             message: discord.Message,
             updating: bool = False
     ) -> None:
-        await self.db.execute(
-            f'''
-            CREATE TABLE "{message.id}" (
-                    role TEXT PRIMARY KEY,
-                    description TEXT,
-                    emoji TEXT
-            );
-            '''
-        )
-
-        for role, description, emoji in zip(roles, descriptions, emojis):
-            await self.db.execute(
+        async with self.db.cursor() as cursor:
+            await cursor.execute(
                 f'''
-                INSERT INTO "{message.id}" VALUES (?, ?, ?);
-                ''',
-                (role, description or '', str(emoji.id or emoji.name if emoji else emoji))
+                CREATE TABLE "{message.id}" (
+                        role TEXT PRIMARY KEY,
+                        description TEXT,
+                        emoji TEXT
+                );
+                '''
             )
 
-        if not updating:
-            await self.db.execute(
-                '''
-                INSERT INTO "authors" VALUES (?, ?);
-                ''',
-                (message.id, author.id)
-            )
+            for role, description, emoji in zip(roles, descriptions, emojis):
+                await cursor.execute(
+                    f'''
+                    INSERT INTO "{message.id}" VALUES (?, ?, ?);
+                    ''',
+                    (role, description or '', str(emoji.id or emoji.name if emoji else emoji))
+                )
+
+            if not updating:
+                await cursor.execute(
+                    '''
+                    INSERT INTO "authors" VALUES (?, ?);
+                    ''',
+                    (message.id, author.id)
+                )
         await self.db.commit()
 
     async def delete(self, message: discord.Message) -> None:
-        await self.db.execute(
-            f'''
-            DROP TABLE "{message.id}";
-            '''
-        )
+        async with self.db.cursor() as cursor:
+            await cursor.execute(
+                f'''
+                DROP TABLE "{message.id}";
+                '''
+            )
         await self.db.commit()
 
     async def get_roles(self, message: discord.Message) -> list[tuple[str, str, str]]:
-        async with self.db.execute(
-            f'''
-            SELECT * FROM "{message.id}";
-            '''
-        ) as cursor:
+        async with self.db.cursor() as cursor:
+            await cursor.execute(
+                f'''
+                SELECT * FROM "{message.id}";
+                '''
+            )
             return await cursor.fetchall()
 
     async def get_author(self, message: discord.Message) -> int:
-        async with self.db.execute(
-            '''
-            SELECT author_id FROM "authors"
-            WHERE message_id = ?;
-            ''',
-            (message.id,)
-        ) as cursor:
-            return (await cursor.fetchone())[0]
+        async with self.db.cursor() as cursor:
+            await cursor.execute(
+                '''
+                SELECT author_id FROM "authors"
+                WHERE message_id = ?;
+                ''',
+                (message.id,)
+            )
+            data = await cursor.fetchone()
+            return data[0]
