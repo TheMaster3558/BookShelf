@@ -15,6 +15,7 @@ FOAAS: Fuck Off As A Service. \
 Timestamps: Make some really cool timestamps! \
 SecretInvites: Get invites without dumb mods knowing. \
 Text: Dwo cwoowl stuff two swomwe text.
+Roles: Easily allow users to get roles.
 
 
 ## Annotations
