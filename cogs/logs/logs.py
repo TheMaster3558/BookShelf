@@ -14,10 +14,10 @@ if TYPE_CHECKING:
 
 
 class MobileSupportFlags(commands.FlagConverter, delimiter=' ', prefix='--'):
-    one_image: Optional[bool] = True
+    mobile: Optional[bool] = True
 
     def __bool__(self):
-        return self.one_image is True
+        return self.mobile is True
 
     @classmethod
     async def convert(cls, ctx: commands.Context, argument: str) -> MobileSupportFlags:
@@ -40,9 +40,16 @@ class Logs(commands.Cog):
 
     @commands.hybrid_command(
         name='snipe',
-        description='Get the most recently deleted message in this channel!'
+        description='Get the most recently deleted message in this channel!',
+        extras={
+            'flags': {
+                '--mobile': 'Whether to only show one image to support mobile.'
+            }
+        }
     )
-    @commands.guild_only()
+    @app_commands.describe(
+        mobile='Whether to only show one iamge to support mobile.'
+    )
     async def hybrid_snipe(self, ctx: commands.Context, *, flags: MobileSupportFlags = None):
         print(flags)
         try:

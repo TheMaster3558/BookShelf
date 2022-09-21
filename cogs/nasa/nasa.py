@@ -137,7 +137,7 @@ class NASA(Database, NASAClient, commands.Cog):
                           date: Optional[DateConverter] = None,
                           *, flags: RandomFlags = None):
         await ctx.typing()
-        print(flags)
+
         if not flags:
             if not date:
                 date = discord.utils.utcnow().strftime('%Y-%m-%d')
