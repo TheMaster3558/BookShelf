@@ -51,7 +51,6 @@ class Logs(commands.Cog):
         mobile='Whether to only show one iamge to support mobile.'
     )
     async def hybrid_snipe(self, ctx: commands.Context, *, flags: MobileSupportFlags = None):
-        print(flags)
         try:
             message = self.snipes[ctx.channel]
         except KeyError:
