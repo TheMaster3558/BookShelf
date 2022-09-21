@@ -32,6 +32,9 @@ class ErrorHandler(commands.Cog):
         elif isinstance(error, self.secret_perms):
             await ctx.send('You don\'t have permissions to run this command.', ephemeral=True)
 
+        elif isinstance(error, commands.BotMissingPermissions):
+            await ctx.send(str(error), ephemeral=True)
+
         elif isinstance(error, commands.TooManyArguments):
             return
 

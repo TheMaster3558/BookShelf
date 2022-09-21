@@ -49,7 +49,8 @@ class BookShelf(commands.Bot):
         'cogs.timestamps',
         'cogs.secretinvites',
         'cogs.text',
-        'cogs.roles'
+        'cogs.roles',
+        'cogs.logs'
     ]
 
     test_guild = discord.Object(id=878431847162466354)

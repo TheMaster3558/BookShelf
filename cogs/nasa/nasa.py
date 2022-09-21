@@ -20,10 +20,17 @@ if TYPE_CHECKING:
 
 
 class RandomFlags(commands.FlagConverter, delimiter=' ', prefix='--'):
-    random: Optional[bool] = None
+    random: Optional[bool] = True
 
     def __bool__(self):
-        return self.random is not None
+        return self.random is True
+
+    @classmethod
+    async def convert(cls, ctx: commands.Context, argument: str) -> RandomFlags:
+        self = await super().convert(ctx, argument)
+        if '--random' not in argument:
+            self.random = False
+        return self  # type: ignore
 
 
 class DateConverter(commands.Converter):
@@ -32,12 +39,12 @@ class DateConverter(commands.Converter):
             years, months, days = argument.split('-')
         except ValueError:
             raise commands.BadArgument('`date` must be in format `YYYY-MM-DD`.')
+        if not years or not months or not days:
+            raise commands.BadArgument('`date` must be in format `YYYY-MM-DD`.')
         return f'{years}-{months}-{days}'
 
 
 class NASA(Database, NASAClient, commands.Cog):
-    get_date = lambda *args, **kwargs: discord.utils.utcnow()
-
     def __init__(self, bot: BookShelf):
         self.bot = bot
         self.first_start = True
@@ -56,12 +63,12 @@ class NASA(Database, NASAClient, commands.Cog):
 
     @tasks.loop(minutes=20)
     async def autopost_apod(self):
-        date = self.get_date().strftime('%Y-%m-%d')
+        date = discord.utils.utcnow().strftime('%Y-%m-%d')
         if not await self.apod(date):
             if not self.first_start:
                 return
 
-            date = (self.get_date() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+            date = (discord.utils.utcnow() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
             if not await self.apod(date):
                 return
 
@@ -129,13 +136,16 @@ class NASA(Database, NASAClient, commands.Cog):
     async def hybrid_apod(self, ctx: commands.Context | VirtualContext,
                           date: Optional[DateConverter] = None,
                           *, flags: RandomFlags = None):
-        if ctx:
-            await ctx.typing()
-
-        if not flags or not flags.random:
+        await ctx.typing()
+        print(flags)
+        if not flags:
             if not date:
-                date = self.get_date().strftime('%Y-%m-%d')
+                date = discord.utils.utcnow().strftime('%Y-%m-%d')
             data = await self.apod(date)
+
+            if data.get('code') == 404:
+                date = (discord.utils.utcnow() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+                data = await self.apod(date)
         else:
             data = await self.apod(count=1)
             data = data[0]

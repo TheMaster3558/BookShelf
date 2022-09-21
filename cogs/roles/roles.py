@@ -131,7 +131,7 @@ class Roles(RolesDatabase, commands.Cog, description='Do some cool stuff with ro
     # listeners
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction):
-        if interaction.message.id not in self.messages:
+        if not interaction.message or interaction.message.id not in self.messages:
             return
 
         await interaction.response.defer()

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import asyncio
-import contextlib
 from math import ceil
 from typing import Any, Iterable, Generator, Optional, overload, Sequence, TypeVar
 
@@ -38,9 +36,11 @@ class InteractionCreator(AuthoredView):
     async def creator(self, interaction: discord.Interaction, button: discord.ui.Button) -> None:
         self.interaction = interaction
 
-        with contextlib.suppress(discord.HTTPException):
-            self.creator.disabled = True
+        self.creator.disabled = True
+        try:
             await interaction.message.edit(view=self)
+        except discord.HTTPException:
+            pass
 
         self.stop()
 
