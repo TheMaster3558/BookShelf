@@ -8,6 +8,7 @@ from discord.ext import commands
 
 import checks
 from utils import InteractionCreator
+from .views import get_views, Manager
 
 if TYPE_CHECKING:
     from bot import BookShelf
@@ -30,13 +31,14 @@ class MobileSupportFlags(commands.FlagConverter, delimiter=' ', prefix='--'):
 class Logs(commands.Cog):
     def __init__(self, bot: BookShelf):
         self.bot = bot
-        self.snipes: dict[discord.abc.GuildChannel, discord.Message] = {}
+        self.snipes: dict[int, discord.Message] = {}
+        self.managers: dict[int, Manager] = {}
 
     # sniping
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message):
         if not message.author.bot and message.guild:
-            self.snipes[message.channel] = message
+            self.snipes[message.channel.id] = message
 
     @commands.hybrid_command(
         name='snipe',
@@ -52,7 +54,7 @@ class Logs(commands.Cog):
     )
     async def hybrid_snipe(self, ctx: commands.Context, *, flags: MobileSupportFlags = None):
         try:
-            message = self.snipes[ctx.channel]
+            message = self.snipes[ctx.channel.id]
         except KeyError:
             await ctx.send('No recently deleted messages in this channel.')
             return
@@ -109,7 +111,7 @@ class Logs(commands.Cog):
         description='Setup logging.'
     )
     @commands.has_permissions(administrator=True)
-    @commands.bot_has_permissions(manage_channels=True)
+    @commands.bot_has_permissions(manage_channels=True, view_audit_log=True)
     async def hybrid_enable(self, ctx: commands.Context):
         if self.logging_enabled(ctx.guild):
             await ctx.send('Logging is already enabled!', ephemeral=True)
@@ -138,9 +140,18 @@ class Logs(commands.Cog):
             overwrites=overwrites,
             reason=f'Logging enabled by {ctx.author}'
         )
-        await category.create_text_channel(name='settings')
+        channel = await category.create_text_channel(name='settings')
         await category.create_text_channel(name='logs')
         await ctx.send('Channels created! It is recommended to check permissions.', ephemeral=True)
+
+        embed = discord.Embed(
+            title='Event Toggler'
+        )
+        await channel.send(embed=embed)
+        manager, views = get_views()
+        for view in views:
+            await channel.send(view=view)
+        self.managers[ctx.guild.id] = manager
 
     @hybrid_logging.command(
         name='disable',
@@ -154,5 +165,7 @@ class Logs(commands.Cog):
             return
 
         category = discord.utils.get(ctx.guild.categories, name='Bookshelf-Logs')
+        for channel in category.channels:
+            await channel.delete(reason='Disabled Logging')
         await category.delete(reason=f'Logging deleted by {ctx.author}')
         await ctx.send('Logging successfully deleted!', ephemeral=True)
